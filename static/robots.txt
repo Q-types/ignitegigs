@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# Disallow dashboard and auth pages
+Disallow: /dashboard
+Disallow: /auth
+Disallow: /api
+Disallow: /pay
+
+# Sitemap
+Sitemap: https://ignitegigs.com/sitemap.xml

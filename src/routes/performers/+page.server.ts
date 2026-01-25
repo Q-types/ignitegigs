@@ -1,4 +1,5 @@
 import type { PageServerLoad } from './$types';
+import { safeParseInt, sanitizeForLog } from '$lib/server/security';
 
 export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	// Get search parameters
@@ -8,7 +9,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	const minPrice = url.searchParams.get('minPrice') ?? '';
 	const maxPrice = url.searchParams.get('maxPrice') ?? '';
 	const sortBy = url.searchParams.get('sort') ?? 'rating';
-	const page = parseInt(url.searchParams.get('page') ?? '1');
+	const page = safeParseInt(url.searchParams.get('page'), 1);
 	const perPage = 12;
 
 	// Build query
@@ -42,11 +43,11 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	}
 
 	if (minPrice) {
-		query = query.gte('min_rate_pence', parseInt(minPrice) * 100);
+		query = query.gte('min_rate_pence', safeParseInt(minPrice, 0) * 100);
 	}
 
 	if (maxPrice) {
-		query = query.lte('min_rate_pence', parseInt(maxPrice) * 100);
+		query = query.lte('min_rate_pence', safeParseInt(maxPrice, 0) * 100);
 	}
 
 	// Apply sorting
@@ -78,7 +79,7 @@ export const load: PageServerLoad = async ({ url, locals: { supabase } }) => {
 	const { data: performers, error, count } = await query;
 
 	if (error) {
-		console.error('Error fetching performers:', error);
+		console.error('Error fetching performers:', sanitizeForLog(error));
 	}
 
 	// Process performers to get primary media

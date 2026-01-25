@@ -1,6 +1,7 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { sendNewBookingRequestEmail } from '$lib/server/email';
+import { safeParseInt, sanitizeForLog } from '$lib/server/security';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase, session } }) => {
 	// Require authentication
@@ -68,11 +69,11 @@ export const actions: Actions = {
 
 		const eventDate = formData.get('eventDate') as string;
 		const eventTime = formData.get('eventTime') as string;
-		const eventDuration = parseInt(formData.get('eventDuration') as string) || null;
+		const eventDuration = safeParseInt(formData.get('eventDuration') as string, 0) || null;
 		const eventLocation = formData.get('eventLocation') as string;
 		const eventType = formData.get('eventType') as string;
 		const eventDetails = formData.get('eventDetails') as string;
-		const guestCount = parseInt(formData.get('guestCount') as string) || null;
+		const guestCount = safeParseInt(formData.get('guestCount') as string, 0) || null;
 
 		// Validation
 		if (!eventDate || !eventLocation) {
@@ -145,7 +146,7 @@ export const actions: Actions = {
 			.single();
 
 		if (bookingError) {
-			console.error('Error creating booking:', bookingError);
+			console.error('Error creating booking:', sanitizeForLog(bookingError));
 			return fail(500, { error: 'Failed to create booking request. Please try again.' });
 		}
 
@@ -168,7 +169,7 @@ export const actions: Actions = {
 					bookingId: booking.id
 				});
 			} catch (emailError) {
-				console.error('Failed to send booking notification email:', emailError);
+				console.error('Failed to send booking notification email:', sanitizeForLog(emailError));
 				// Don't fail the booking just because email failed
 			}
 		}

@@ -1,5 +1,6 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
+import { safeParseInt, sanitizeForLog } from '$lib/server/security';
 
 export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
 	const { user, performerProfile } = await parent();
@@ -31,7 +32,7 @@ export const actions: Actions = {
 		const bio = formData.get('bio') as string;
 		const tagline = formData.get('tagline') as string;
 		const locationName = formData.get('locationName') as string;
-		const travelRadius = parseInt(formData.get('travelRadius') as string) || 25;
+		const travelRadius = safeParseInt(formData.get('travelRadius') as string, 25);
 		const categories = formData.getAll('categories') as string[];
 		const actTypes = formData.getAll('actTypes') as string[];
 		const hourlyRate = formData.get('hourlyRate') as string;
@@ -70,7 +71,7 @@ export const actions: Actions = {
 				.eq('id', performerProfile.id);
 
 			if (error) {
-				console.error('Profile update error:', error);
+				console.error('Profile update error:', sanitizeForLog(error));
 				return fail(500, { error: 'Failed to update profile' });
 			}
 		} else {
@@ -81,7 +82,7 @@ export const actions: Actions = {
 			});
 
 			if (error) {
-				console.error('Profile create error:', error);
+				console.error('Profile create error:', sanitizeForLog(error));
 				return fail(500, { error: 'Failed to create profile' });
 			}
 		}

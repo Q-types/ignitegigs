@@ -1,9 +1,10 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { getSafeRedirectUrl, sanitizeForLog } from '$lib/server/security';
 
 export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 	const code = url.searchParams.get('code');
-	const next = url.searchParams.get('next') ?? '/dashboard';
+	const next = getSafeRedirectUrl(url.searchParams.get('next'));
 	const accountType = url.searchParams.get('type') as 'performer' | 'client' | null;
 
 	if (code) {
@@ -28,7 +29,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 				});
 
 				if (insertError) {
-					console.error('Error creating user record:', insertError);
+					console.error('Error creating user record:', sanitizeForLog(insertError));
 				}
 
 				// If signing up as a performer, create initial performer profile
@@ -43,7 +44,7 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 					});
 
 					if (profileError) {
-						console.error('Error creating performer profile:', profileError);
+						console.error('Error creating performer profile:', sanitizeForLog(profileError));
 					}
 				}
 			}

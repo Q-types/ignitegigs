@@ -3,12 +3,15 @@
  * For production at scale, use Redis or similar distributed store
  */
 
+import { randomBytes } from 'crypto';
+
 interface RateLimitEntry {
 	count: number;
 	resetTime: number;
 }
 
 const store = new Map<string, RateLimitEntry>();
+let cleanupCounter = 0;
 
 interface RateLimitConfig {
 	windowMs: number; // Time window in milliseconds
@@ -27,8 +30,10 @@ export function rateLimit(
 	const { windowMs, maxRequests } = { ...defaultConfig, ...config };
 	const now = Date.now();
 
-	// Clean up expired entries periodically
-	if (Math.random() < 0.01) {
+	// Clean up expired entries periodically (every ~100 requests using counter instead of random)
+	cleanupCounter++;
+	if (cleanupCounter >= 100) {
+		cleanupCounter = 0;
 		for (const [key, entry] of store.entries()) {
 			if (entry.resetTime < now) {
 				store.delete(key);

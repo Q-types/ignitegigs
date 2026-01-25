@@ -1,8 +1,9 @@
 import { fail, redirect } from '@sveltejs/kit';
 import type { Actions, PageServerLoad } from './$types';
+import { getSafeRedirectUrl } from '$lib/server/security';
 
 export const load: PageServerLoad = async ({ url }) => {
-	const redirectTo = url.searchParams.get('redirectTo') ?? '/dashboard';
+	const redirectTo = getSafeRedirectUrl(url.searchParams.get('redirectTo'));
 	const message = url.searchParams.get('message');
 	const error = url.searchParams.get('error');
 
@@ -89,7 +90,7 @@ export const actions: Actions = {
 
 	// Google OAuth
 	google: async ({ locals: { supabase }, url }) => {
-		const redirectTo = url.searchParams.get('redirectTo') ?? '/dashboard';
+		const redirectTo = getSafeRedirectUrl(url.searchParams.get('redirectTo'));
 
 		const { data, error } = await supabase.auth.signInWithOAuth({
 			provider: 'google',

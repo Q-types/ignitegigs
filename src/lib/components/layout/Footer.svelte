@@ -8,8 +8,7 @@
 			<!-- Brand -->
 			<div class="md:col-span-1">
 				<a href="/" class="flex items-center gap-2 mb-4">
-					<span class="text-2xl">🔥</span>
-					<span class="font-display font-bold text-xl">IgniteGigs</span>
+					<img src="/logo.png" alt="IgniteGigs" class="h-10 w-auto brightness-0 invert" />
 				</a>
 				<p class="text-gray-400 text-sm">
 					The performer-owned platform. Book direct. Keep more.

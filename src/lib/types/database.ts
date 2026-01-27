@@ -162,6 +162,8 @@ export interface Database {
 					is_active: boolean;
 					is_featured: boolean;
 					profile_complete: boolean;
+					vouch_count: number;
+					community_trusted: boolean;
 					created_at: string;
 					updated_at: string;
 				};
@@ -192,6 +194,8 @@ export interface Database {
 					is_active?: boolean;
 					is_featured?: boolean;
 					profile_complete?: boolean;
+					vouch_count?: number;
+					community_trusted?: boolean;
 					created_at?: string;
 					updated_at?: string;
 				};
@@ -222,6 +226,8 @@ export interface Database {
 					is_active?: boolean;
 					is_featured?: boolean;
 					profile_complete?: boolean;
+					vouch_count?: number;
+					community_trusted?: boolean;
 					created_at?: string;
 					updated_at?: string;
 				};
@@ -461,6 +467,32 @@ export interface Database {
 					notes?: string | null;
 				};
 			};
+			performer_vouches: {
+				Row: {
+					id: string;
+					voucher_id: string;
+					vouchee_id: string;
+					message: string | null;
+					vouch_type: 'skill' | 'professionalism' | 'safety' | 'reliability';
+					created_at: string;
+				};
+				Insert: {
+					id?: string;
+					voucher_id: string;
+					vouchee_id: string;
+					message?: string | null;
+					vouch_type?: 'skill' | 'professionalism' | 'safety' | 'reliability';
+					created_at?: string;
+				};
+				Update: {
+					id?: string;
+					voucher_id?: string;
+					vouchee_id?: string;
+					message?: string | null;
+					vouch_type?: 'skill' | 'professionalism' | 'safety' | 'reliability';
+					created_at?: string;
+				};
+			};
 		};
 		Views: {};
 		Functions: {};
@@ -482,3 +514,16 @@ export type Booking = Tables<'bookings'>;
 export type Review = Tables<'reviews'>;
 export type Message = Tables<'messages'>;
 export type Availability = Tables<'availability'>;
+export type PerformerVouch = Tables<'performer_vouches'>;
+
+// Vouch type with voucher details (from get_performer_vouches function)
+export interface VouchWithVoucher {
+	id: string;
+	voucher_id: string;
+	voucher_stage_name: string | null;
+	voucher_avatar_url: string | null;
+	voucher_user_id: string;
+	message: string | null;
+	vouch_type: 'skill' | 'professionalism' | 'safety' | 'reliability';
+	created_at: string;
+}

@@ -11,8 +11,7 @@
 		<div class="flex items-center justify-between h-16">
 			<!-- Logo -->
 			<a href="/" class="flex items-center gap-2">
-				<span class="text-2xl">🔥</span>
-				<span class="font-display font-bold text-xl text-secondary">IgniteGigs</span>
+				<img src="/logo.png" alt="IgniteGigs" class="h-10 w-auto" />
 			</a>
 
 			<!-- Desktop Navigation -->

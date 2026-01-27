@@ -145,9 +145,6 @@
 
 		<!-- Steps -->
 		<div class="relative">
-			<!-- Connection Line (Desktop) -->
-			<div class="hidden lg:block absolute top-24 left-[10%] right-[10%] h-0.5 bg-gray-200"></div>
-
 			<div class="grid md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4">
 				{#each steps as step}
 					<div class="relative text-center">

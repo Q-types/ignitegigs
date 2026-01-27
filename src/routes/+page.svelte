@@ -9,60 +9,82 @@
 </svelte:head>
 
 <!-- Hero Section -->
-<section class="bg-gradient-to-br from-secondary via-secondary to-gray-900 text-white">
+<section class="bg-gradient-to-br from-secondary via-secondary to-gray-900 text-white overflow-hidden">
 	<div class="container-wide py-16 md:py-24">
-		<div class="max-w-3xl">
-			<h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-				Book Fire & LED Performers
-				<span class="text-primary">Directly.</span>
-			</h1>
-			<p class="text-lg md:text-xl text-gray-300 mb-8">
-				The performer-owned platform where entertainers keep 92% and clients skip the agency markup.
-			</p>
+		<div class="grid lg:grid-cols-2 gap-12 items-center">
+			<!-- Left: Content -->
+			<div>
+				<!-- Brand Tagline -->
+				<p class="text-primary font-semibold text-sm uppercase tracking-wider mb-4">
+					Community-Powered. Performer-Owned.
+				</p>
 
-			<!-- Search Box -->
-			<div class="bg-white rounded-2xl p-4 shadow-xl">
-				<form action="/performers" method="GET" class="flex flex-col md:flex-row gap-3">
-					<div class="flex-1">
-						<label for="location" class="sr-only">Location</label>
-						<input
-							type="text"
-							id="location"
-							name="location"
-							bind:value={searchLocation}
-							placeholder="Where's your event?"
-							class="input-field w-full"
-						/>
+				<h1 class="font-display text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+					Book Fire & LED Performers
+					<span class="text-primary">Directly.</span>
+				</h1>
+				<p class="text-lg md:text-xl text-gray-300 mb-8">
+					The performer-owned platform where entertainers keep 92% and clients skip the agency markup.
+				</p>
+
+				<!-- Search Box -->
+				<div class="bg-white rounded-2xl p-4 shadow-xl">
+					<form action="/performers" method="GET" class="flex flex-col md:flex-row gap-3">
+						<div class="flex-1">
+							<label for="location" class="sr-only">Location</label>
+							<input
+								type="text"
+								id="location"
+								name="location"
+								bind:value={searchLocation}
+								placeholder="Where's your event?"
+								class="input-field w-full"
+							/>
+						</div>
+						<div class="flex-1">
+							<label for="date" class="sr-only">Date</label>
+							<input
+								type="date"
+								id="date"
+								name="date"
+								bind:value={searchDate}
+								class="input-field w-full"
+							/>
+						</div>
+						<button type="submit" class="btn-primary btn-lg whitespace-nowrap">
+							Find Performers
+						</button>
+					</form>
+				</div>
+
+				<!-- Trust Badges -->
+				<div class="flex flex-wrap items-center gap-6 mt-8 text-sm text-gray-400">
+					<div class="flex items-center gap-2">
+						<span class="text-success">✓</span>
+						<span>500+ verified performers</span>
 					</div>
-					<div class="flex-1">
-						<label for="date" class="sr-only">Date</label>
-						<input
-							type="date"
-							id="date"
-							name="date"
-							bind:value={searchDate}
-							class="input-field w-full"
-						/>
+					<div class="flex items-center gap-2">
+						<span class="text-success">✓</span>
+						<span>No agency fees</span>
 					</div>
-					<button type="submit" class="btn-primary btn-lg whitespace-nowrap">
-						Find Performers
-					</button>
-				</form>
+					<div class="flex items-center gap-2">
+						<span class="text-success">✓</span>
+						<span>Secure payments</span>
+					</div>
+				</div>
 			</div>
 
-			<!-- Trust Badges -->
-			<div class="flex flex-wrap items-center gap-6 mt-8 text-sm text-gray-400">
-				<div class="flex items-center gap-2">
-					<span class="text-success">✓</span>
-					<span>500+ verified performers</span>
-				</div>
-				<div class="flex items-center gap-2">
-					<span class="text-success">✓</span>
-					<span>No agency fees</span>
-				</div>
-				<div class="flex items-center gap-2">
-					<span class="text-success">✓</span>
-					<span>Secure payments</span>
+			<!-- Right: Symbol -->
+			<div class="hidden lg:flex items-center justify-center">
+				<div class="relative">
+					<!-- Glow effect behind symbol -->
+					<div class="absolute inset-0 bg-primary/20 blur-3xl rounded-full scale-150"></div>
+					<!-- Symbol -->
+					<img
+						src="/ignitegigs-symbol.png"
+						alt="IgniteGigs"
+						class="relative w-80 h-80 object-contain drop-shadow-2xl"
+					/>
 				</div>
 			</div>
 		</div>

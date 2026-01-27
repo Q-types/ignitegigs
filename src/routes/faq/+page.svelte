@@ -10,10 +10,18 @@
 		items: FAQItem[];
 	};
 
+	const sectionIcons: Record<string, string> = {
+		fire: 'M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z',
+		calendar: 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5',
+		question: 'M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z',
+		search: 'M21 21l-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z',
+		party: 'M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5m-9-6h.008v.008H12v-.008ZM12 15h.008v.008H12V15Zm0 2.25h.008v.008H12v-.008ZM9.75 15h.008v.008H9.75V15Zm0 2.25h.008v.008H9.75v-.008ZM7.5 15h.008v.008H7.5V15Zm0 2.25h.008v.008H7.5v-.008Zm6.75-4.5h.008v.008h-.008v-.008Zm0 2.25h.008v.008h-.008V15Zm0 2.25h.008v.008h-.008v-.008Zm2.25-4.5h.008v.008H16.5v-.008Zm0 2.25h.008v.008H16.5V15Z'
+	};
+
 	const faqSections: FAQSection[] = [
 		{
 			title: 'For Performers',
-			icon: '🔥',
+			icon: 'fire',
 			items: [
 				{
 					question: 'How do I sign up?',
@@ -47,7 +55,7 @@
 		},
 		{
 			title: 'For Clients',
-			icon: '🎪',
+			icon: 'calendar',
 			items: [
 				{
 					question: 'How do I find a performer?',
@@ -77,7 +85,7 @@
 		},
 		{
 			title: 'General',
-			icon: '❓',
+			icon: 'question',
 			items: [
 				{
 					question: 'What makes IgniteGigs different?',
@@ -141,7 +149,9 @@
 					<!-- Section Header -->
 					<div class="flex items-center gap-3 mb-6">
 						<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center">
-							<span class="text-2xl">{section.icon}</span>
+							<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d={sectionIcons[section.icon]} />
+							</svg>
 						</div>
 						<h2 class="font-display text-2xl md:text-3xl font-bold text-secondary">
 							{section.title}
@@ -210,7 +220,9 @@
 		<div class="grid md:grid-cols-3 gap-8">
 			<a href="/auth/signup?type=performer" class="card-hover p-8 text-center group">
 				<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-					<span class="text-3xl">🔥</span>
+					<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d={sectionIcons.fire} />
+					</svg>
 				</div>
 				<h3 class="font-display text-xl font-semibold mb-2 text-secondary">Join as Performer</h3>
 				<p class="text-gray-600">
@@ -220,7 +232,9 @@
 
 			<a href="/performers" class="card-hover p-8 text-center group">
 				<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-					<span class="text-3xl">🔍</span>
+					<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d={sectionIcons.search} />
+					</svg>
 				</div>
 				<h3 class="font-display text-xl font-semibold mb-2 text-secondary">Find Performers</h3>
 				<p class="text-gray-600">
@@ -230,7 +244,9 @@
 
 			<a href="/auth/signup?type=client" class="card-hover p-8 text-center group">
 				<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
-					<span class="text-3xl">🎉</span>
+					<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d={sectionIcons.party} />
+					</svg>
 				</div>
 				<h3 class="font-display text-xl font-semibold mb-2 text-secondary">Book for Events</h3>
 				<p class="text-gray-600">

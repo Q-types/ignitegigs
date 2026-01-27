@@ -61,9 +61,8 @@
 		<div class="flex flex-col flex-grow bg-white border-r border-gray-200 pt-5 pb-4 overflow-y-auto">
 			<!-- Logo -->
 			<div class="flex items-center flex-shrink-0 px-4">
-				<a href="/" class="flex items-center gap-2">
-					<span class="text-2xl">🔥</span>
-					<span class="font-display font-bold text-xl text-secondary">IgniteGigs</span>
+				<a href="/" class="flex items-center">
+					<img src="/ignitegigs-logo-horizontal.png" alt="IgniteGigs" class="h-10 w-auto rounded-md" />
 				</a>
 			</div>
 
@@ -141,9 +140,8 @@
 
 	<!-- Mobile Header -->
 	<div class="lg:hidden sticky top-0 z-40 flex items-center gap-x-6 bg-white px-4 py-4 shadow-sm">
-		<a href="/" class="flex items-center gap-2">
-			<span class="text-xl">🔥</span>
-			<span class="font-display font-bold text-lg text-secondary">IgniteGigs</span>
+		<a href="/" class="flex items-center">
+			<img src="/ignitegigs-symbol.png" alt="IgniteGigs" class="h-8 w-auto rounded-md" />
 		</a>
 		<div class="flex-1"></div>
 		<button
@@ -185,9 +183,8 @@
 
 				<div class="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
 					<div class="flex items-center flex-shrink-0 px-4">
-						<a href="/" class="flex items-center gap-2">
-							<span class="text-2xl">🔥</span>
-							<span class="font-display font-bold text-xl text-secondary">IgniteGigs</span>
+						<a href="/" class="flex items-center">
+							<img src="/ignitegigs-logo-horizontal.png" alt="IgniteGigs" class="h-10 w-auto rounded-md" />
 						</a>
 					</div>
 					<nav class="mt-5 px-2 space-y-1">

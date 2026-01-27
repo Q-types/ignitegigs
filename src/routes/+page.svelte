@@ -151,7 +151,9 @@
 			<!-- Feature 1 -->
 			<div class="text-center p-6">
 				<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-					<span class="text-3xl">📹</span>
+					<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="m15.75 10.5 4.72-4.72a.75.75 0 0 1 1.28.53v11.38a.75.75 0 0 1-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 0 0 2.25-2.25v-9a2.25 2.25 0 0 0-2.25-2.25h-9A2.25 2.25 0 0 0 2.25 7.5v9a2.25 2.25 0 0 0 2.25 2.25Z" />
+					</svg>
 				</div>
 				<h3 class="font-display text-xl font-semibold mb-2">Video Profiles</h3>
 				<p class="text-gray-600">
@@ -162,7 +164,9 @@
 			<!-- Feature 2 -->
 			<div class="text-center p-6">
 				<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-					<span class="text-3xl">⭐</span>
+					<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M11.48 3.499a.562.562 0 0 1 1.04 0l2.125 5.111a.563.563 0 0 0 .475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 0 0-.182.557l1.285 5.385a.562.562 0 0 1-.84.61l-4.725-2.885a.562.562 0 0 0-.586 0L6.982 20.54a.562.562 0 0 1-.84-.61l1.285-5.386a.562.562 0 0 0-.182-.557l-4.204-3.602a.562.562 0 0 1 .321-.988l5.518-.442a.563.563 0 0 0 .475-.345L11.48 3.5Z" />
+					</svg>
 				</div>
 				<h3 class="font-display text-xl font-semibold mb-2">Verified Reviews</h3>
 				<p class="text-gray-600">
@@ -173,7 +177,9 @@
 			<!-- Feature 3 -->
 			<div class="text-center p-6">
 				<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-					<span class="text-3xl">💰</span>
+					<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z" />
+					</svg>
 				</div>
 				<h3 class="font-display text-xl font-semibold mb-2">Fast Payments</h3>
 				<p class="text-gray-600">
@@ -193,7 +199,7 @@
 			</blockquote>
 			<div class="flex items-center justify-center gap-4">
 				<div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center">
-					<span class="text-xl">🔥</span>
+					<span class="text-xl font-bold text-white">S</span>
 				</div>
 				<div class="text-left">
 					<p class="font-semibold">Sarah K.</p>
@@ -257,7 +263,10 @@
 			</div>
 			<div class="bg-white rounded-2xl shadow-xl p-8">
 				<div class="aspect-video bg-gray-100 rounded-lg flex items-center justify-center mb-4">
-					<span class="text-6xl">🎪</span>
+					<svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.91 11.672a.375.375 0 0 1 0 .656l-5.603 3.113a.375.375 0 0 1-.557-.328V8.887c0-.286.307-.466.557-.327l5.603 3.112Z" />
+					</svg>
 				</div>
 				<p class="text-center text-gray-500 text-sm">
 					Preview performer reels before booking

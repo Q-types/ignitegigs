@@ -53,9 +53,8 @@
 	<div class="w-full max-w-md">
 		<!-- Header -->
 		<div class="text-center mb-8">
-			<a href="/" class="inline-flex items-center gap-2 mb-6">
-				<span class="text-3xl">🔥</span>
-				<span class="font-display font-bold text-2xl text-secondary">IgniteGigs</span>
+			<a href="/" class="inline-block mb-6">
+				<img src="/ignitegigs-logo-horizontal.png" alt="IgniteGigs" class="h-12 w-auto rounded-md mx-auto" />
 			</a>
 			<h1 class="font-display text-3xl font-bold text-secondary mb-2">
 				Create your account
@@ -107,7 +106,12 @@
 							: 'border-gray-200 hover:border-gray-300'}"
 						onclick={() => (accountType = 'performer')}
 					>
-						<span class="text-2xl mb-2 block">🔥</span>
+						<span class="w-8 h-8 mb-2 block">
+							<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z" />
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z" />
+							</svg>
+						</span>
 						<span class="font-semibold text-gray-900 block">Perform</span>
 						<span class="text-sm text-gray-500">Showcase my skills</span>
 					</button>
@@ -118,7 +122,11 @@
 							: 'border-gray-200 hover:border-gray-300'}"
 						onclick={() => (accountType = 'client')}
 					>
-						<span class="text-2xl mb-2 block">🎉</span>
+						<span class="w-8 h-8 mb-2 block">
+							<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5" />
+							</svg>
+						</span>
 						<span class="font-semibold text-gray-900 block">Book</span>
 						<span class="text-sm text-gray-500">Hire performers</span>
 					</button>

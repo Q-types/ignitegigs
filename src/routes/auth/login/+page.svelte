@@ -23,9 +23,8 @@
 	<div class="w-full max-w-md">
 		<!-- Header -->
 		<div class="text-center mb-8">
-			<a href="/" class="inline-flex items-center gap-2 mb-6">
-				<span class="text-3xl">🔥</span>
-				<span class="font-display font-bold text-2xl text-secondary">IgniteGigs</span>
+			<a href="/" class="inline-block mb-6">
+				<img src="/ignitegigs-logo-horizontal.png" alt="IgniteGigs" class="h-12 w-auto rounded-md mx-auto" />
 			</a>
 			<h1 class="font-display text-3xl font-bold text-secondary mb-2">
 				Welcome back

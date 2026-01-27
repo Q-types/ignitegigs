@@ -1,17 +1,26 @@
 <script lang="ts">
+	const careerIcons: Record<string, string> = {
+		globe: 'M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418',
+		fire: 'M15.362 5.214A8.252 8.252 0 0 1 12 21 8.25 8.25 0 0 1 6.038 7.047 8.287 8.287 0 0 0 9 9.601a8.983 8.983 0 0 1 3.361-6.867 8.21 8.21 0 0 0 3 2.48Z M12 18a3.75 3.75 0 0 0 .495-7.468 5.99 5.99 0 0 0-1.925 3.547 5.975 5.975 0 0 1-2.133-1.001A3.75 3.75 0 0 0 12 18Z',
+		target: 'M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z',
+		heart: 'M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z',
+		users: 'M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z',
+		rocket: 'M15.59 14.37a6 6 0 0 1-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 0 0 6.16-12.12A14.98 14.98 0 0 0 9.631 8.41m5.96 5.96a14.926 14.926 0 0 1-5.841 2.58m-.119-8.54a6 6 0 0 0-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 0 0-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 0 1-2.448-2.448 14.9 14.9 0 0 1 .06-.312m-2.24 2.39a4.493 4.493 0 0 0-1.757 4.306 4.493 4.493 0 0 0 4.306-1.758M16.5 9a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0Z'
+	};
+
 	const culturePoints = [
 		{
-			icon: '🌍',
+			icon: 'globe',
 			title: 'Remote-first culture',
 			description: 'Work from anywhere in the world. We believe great work happens when you have flexibility.'
 		},
 		{
-			icon: '🔥',
+			icon: 'fire',
 			title: 'Performer-founded company',
 			description: 'Built by performers who understand the challenges of the entertainment industry.'
 		},
 		{
-			icon: '🎯',
+			icon: 'target',
 			title: 'Mission-driven work',
 			description: 'Every feature we build helps performers earn more and clients book better.'
 		}
@@ -19,17 +28,17 @@
 
 	const values = [
 		{
-			icon: '❤️',
+			icon: 'heart',
 			title: 'Passion for creators',
 			description: 'We genuinely care about helping performers succeed in their craft.'
 		},
 		{
-			icon: '🤝',
+			icon: 'users',
 			title: 'Community-first mindset',
 			description: 'Our community of performers drives everything we do and build.'
 		},
 		{
-			icon: '🚀',
+			icon: 'rocket',
 			title: 'Startup mentality',
 			description: 'Move fast, learn quickly, and embrace the adventure of building something new.'
 		}
@@ -87,7 +96,9 @@
 				{#each culturePoints as point}
 					<div class="text-center p-6">
 						<div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
-							<span class="text-3xl">{point.icon}</span>
+							<svg class="w-8 h-8 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d={careerIcons[point.icon]} />
+							</svg>
 						</div>
 						<h3 class="font-display text-xl font-semibold text-secondary mb-2">
 							{point.title}
@@ -144,7 +155,9 @@
 				{#each values as value}
 					<div class="bg-white rounded-xl p-6 shadow-card">
 						<div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
-							<span class="text-2xl">{value.icon}</span>
+							<svg class="w-6 h-6 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d={careerIcons[value.icon]} />
+							</svg>
 						</div>
 						<h3 class="font-display text-lg font-semibold text-secondary mb-2">
 							{value.title}

@@ -11,30 +11,37 @@
 
 	const values = [
 		{
-			icon: '💰',
+			icon: 'currency',
 			title: 'Fair Pay',
 			description: '92% goes to performers. Always. No hidden fees, no surprise deductions. Transparent pricing that respects your worth.',
 			highlight: '92%'
 		},
 		{
-			icon: '🤝',
+			icon: 'users',
 			title: 'Community First',
 			description: 'Our vouching system connects experienced performers with newcomers. Mentorship, support, and a community that lifts everyone up.',
 			highlight: 'Vouching'
 		},
 		{
-			icon: '🔗',
+			icon: 'link',
 			title: 'Direct Connection',
 			description: 'No middlemen. No gatekeepers. Real relationships between performers and clients that last beyond single bookings.',
 			highlight: 'Direct'
 		},
 		{
-			icon: '🛡️',
+			icon: 'shield',
 			title: 'Trust & Safety',
 			description: 'Every performer is verified. Every payment is secured. Background checks, insurance verification, and escrow protection.',
 			highlight: 'Verified'
 		}
 	];
+
+	const valueIcons: Record<string, string> = {
+		currency: 'M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z',
+		users: 'M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z',
+		link: 'M13.19 8.688a4.5 4.5 0 0 1 1.242 7.244l-4.5 4.5a4.5 4.5 0 0 1-6.364-6.364l1.757-1.757m13.35-.622 1.757-1.757a4.5 4.5 0 0 0-6.364-6.364l-4.5 4.5a4.5 4.5 0 0 0 1.242 7.244',
+		shield: 'M9 12.75 11.25 15 15 9.75m-3-7.036A11.959 11.959 0 0 1 3.598 6 11.99 11.99 0 0 0 3 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285Z'
+	};
 
 	const differences = [
 		{
@@ -162,7 +169,10 @@
 			<!-- Mission -->
 			<div class="bg-white rounded-2xl p-8 lg:p-10 shadow-card">
 				<div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mb-6">
-					<span class="text-3xl">🎯</span>
+					<svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.5 10.5c0 7.142-7.5 11.25-7.5 11.25S4.5 17.642 4.5 10.5a7.5 7.5 0 1 1 15 0Z" />
+					</svg>
 				</div>
 				<h2 class="font-display text-2xl font-bold text-secondary mb-4">Our Mission</h2>
 				<p class="text-gray-600 text-lg leading-relaxed">
@@ -176,7 +186,9 @@
 			<!-- Vision -->
 			<div class="bg-secondary rounded-2xl p-8 lg:p-10 text-white">
 				<div class="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center mb-6">
-					<span class="text-3xl">🌟</span>
+					<svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
+					</svg>
 				</div>
 				<h2 class="font-display text-2xl font-bold mb-4">Our Vision</h2>
 				<p class="text-gray-300 text-lg leading-relaxed">
@@ -203,7 +215,9 @@
 			{#each values as value}
 				<div class="group bg-gray-50 hover:bg-white rounded-2xl p-6 lg:p-8 transition-all duration-300 hover:shadow-card-hover border border-transparent hover:border-primary/20">
 					<div class="w-14 h-14 bg-primary/10 group-hover:bg-primary/20 rounded-xl flex items-center justify-center mb-5 transition-colors duration-300">
-						<span class="text-3xl">{value.icon}</span>
+						<svg class="w-7 h-7 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d={valueIcons[value.icon]} />
+						</svg>
 					</div>
 					<div class="inline-block px-3 py-1 bg-primary/10 text-primary text-sm font-semibold rounded-full mb-3">
 						{value.highlight}
@@ -268,7 +282,9 @@
 		<div class="max-w-4xl mx-auto">
 			<div class="bg-white rounded-2xl p-8 lg:p-12 text-center border-2 border-dashed border-gray-200">
 				<div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-6">
-					<span class="text-4xl">👥</span>
+					<svg class="w-10 h-10 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M18 18.72a9.094 9.094 0 0 0 3.741-.479 3 3 0 0 0-4.682-2.72m.94 3.198.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0 1 12 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 0 1 6 18.719m12 0a5.971 5.971 0 0 0-.941-3.197m0 0A5.995 5.995 0 0 0 12 12.75a5.995 5.995 0 0 0-5.058 2.772m0 0a3 3 0 0 0-4.681 2.72 8.986 8.986 0 0 0 3.74.477m.94-3.197a5.971 5.971 0 0 0-.94 3.197M15 6.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm6 3a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Zm-13.5 0a2.25 2.25 0 1 1-4.5 0 2.25 2.25 0 0 1 4.5 0Z" />
+					</svg>
 				</div>
 				<h3 class="font-display text-xl font-semibold text-secondary mb-3">Meet the team soon</h3>
 				<p class="text-gray-500 max-w-md mx-auto">

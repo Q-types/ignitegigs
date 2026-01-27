@@ -107,14 +107,14 @@
 
 		<!-- Steps Grid -->
 		<div class="relative">
-			<!-- Connection line (desktop only) -->
-			<div class="hidden lg:block absolute top-24 left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-primary/20 via-primary to-primary/20"></div>
+			<!-- Connection line (desktop only) - positioned below icons -->
+			<div class="hidden lg:block absolute top-[5.5rem] left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-primary/20 via-primary to-primary/20 -z-10"></div>
 
 			<div class="grid md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4">
 				{#each steps as step}
 					<div class="relative text-center group">
 						<!-- Step number badge -->
-						<div class="relative inline-flex items-center justify-center w-16 h-16 bg-white border-2 border-primary rounded-2xl shadow-lg mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
+						<div class="relative z-10 inline-flex items-center justify-center w-16 h-16 bg-white border-2 border-primary rounded-2xl shadow-lg mb-6 mx-auto group-hover:scale-110 transition-transform duration-300">
 							<div class="text-primary">
 								{@html step.icon}
 							</div>

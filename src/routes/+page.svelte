@@ -220,7 +220,7 @@
 			<p class="text-xl mb-8 opacity-90">
 				Join free. Only 8% when you book. No monthly fees.
 			</p>
-			<a href="/auth/signup?type=performer" class="btn-lg bg-white text-primary hover:bg-gray-100 font-semibold px-8">
+			<a href="/auth/signup?type=performer" class="btn btn-lg bg-white text-primary hover:bg-gray-50 font-semibold px-8 shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-105">
 				Join Free — Takes 5 Minutes
 			</a>
 		</div>

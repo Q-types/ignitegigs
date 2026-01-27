@@ -121,6 +121,109 @@
 		</div>
 	</div>
 
+	<!-- Performance Snapshot -->
+	<div class="bg-gradient-to-br from-secondary to-gray-900 rounded-card shadow-card p-6 text-white">
+		<div class="flex items-center justify-between mb-6">
+			<div>
+				<h2 class="font-display text-lg font-semibold">Performance Snapshot</h2>
+				<p class="text-gray-400 text-sm">Your key metrics this month</p>
+			</div>
+			<a href="/dashboard/analytics" class="btn bg-white/10 hover:bg-white/20 text-white text-sm border border-white/20">
+				View Full Analytics
+			</a>
+		</div>
+
+		<div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+			<!-- Profile Views -->
+			<div class="bg-white/10 rounded-lg p-4">
+				<div class="flex items-center gap-2 mb-2">
+					<svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+					</svg>
+					<span class="text-xs text-gray-400">Profile Views</span>
+				</div>
+				<p class="text-2xl font-bold">1,247</p>
+				<div class="flex items-center gap-1 mt-1">
+					<svg class="w-3 h-3 text-success" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+					</svg>
+					<span class="text-xs text-success">+12%</span>
+				</div>
+			</div>
+
+			<!-- Conversion Rate -->
+			<div class="bg-white/10 rounded-lg p-4">
+				<div class="flex items-center gap-2 mb-2">
+					<svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
+					</svg>
+					<span class="text-xs text-gray-400">Conversion</span>
+				</div>
+				<p class="text-2xl font-bold">8.4%</p>
+				<div class="flex items-center gap-1 mt-1">
+					<svg class="w-3 h-3 text-success" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+					</svg>
+					<span class="text-xs text-success">+2.1%</span>
+				</div>
+			</div>
+
+			<!-- Avg Booking Value -->
+			<div class="bg-white/10 rounded-lg p-4">
+				<div class="flex items-center gap-2 mb-2">
+					<svg class="w-4 h-4 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+					</svg>
+					<span class="text-xs text-gray-400">Avg Booking</span>
+				</div>
+				<p class="text-2xl font-bold">£485</p>
+				<div class="flex items-center gap-1 mt-1">
+					<svg class="w-3 h-3 text-success" fill="currentColor" viewBox="0 0 20 20">
+						<path fill-rule="evenodd" d="M5.293 9.707a1 1 0 010-1.414l4-4a1 1 0 011.414 0l4 4a1 1 0 01-1.414 1.414L11 7.414V15a1 1 0 11-2 0V7.414L6.707 9.707a1 1 0 01-1.414 0z" clip-rule="evenodd" />
+					</svg>
+					<span class="text-xs text-success">+£35</span>
+				</div>
+			</div>
+
+			<!-- Review Score -->
+			<div class="bg-white/10 rounded-lg p-4">
+				<div class="flex items-center gap-2 mb-2">
+					<svg class="w-4 h-4 text-primary" fill="currentColor" viewBox="0 0 20 20">
+						<path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+					</svg>
+					<span class="text-xs text-gray-400">Rating</span>
+				</div>
+				<p class="text-2xl font-bold">4.9</p>
+				<p class="text-xs text-gray-400 mt-1">23 reviews</p>
+			</div>
+		</div>
+
+		<!-- Mini Chart -->
+		<div class="mt-6 pt-4 border-t border-white/10">
+			<div class="flex items-center justify-between mb-3">
+				<span class="text-sm text-gray-400">Earnings Trend (6 months)</span>
+			</div>
+			<div class="flex items-end gap-1 h-16">
+				{#each [45, 62, 58, 75, 82, 95] as value, i}
+					<div
+						class="flex-1 bg-gradient-to-t from-primary/50 to-primary rounded-t transition-all hover:from-primary/70 hover:to-primary"
+						style="height: {value}%"
+						title="Month {i + 1}"
+					></div>
+				{/each}
+			</div>
+			<div class="flex justify-between mt-2 text-xs text-gray-500">
+				<span>Aug</span>
+				<span>Sep</span>
+				<span>Oct</span>
+				<span>Nov</span>
+				<span>Dec</span>
+				<span>Jan</span>
+			</div>
+		</div>
+	</div>
+
 	<!-- Main Content Grid -->
 	<div class="grid lg:grid-cols-2 gap-8">
 		<!-- Upcoming Events -->

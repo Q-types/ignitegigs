@@ -107,9 +107,6 @@
 
 		<!-- Steps Grid -->
 		<div class="relative">
-			<!-- Connection line (desktop only) - positioned below icons -->
-			<div class="hidden lg:block absolute top-[5.5rem] left-[10%] right-[10%] h-0.5 bg-gradient-to-r from-primary/20 via-primary to-primary/20 -z-10"></div>
-
 			<div class="grid md:grid-cols-3 lg:grid-cols-5 gap-8 lg:gap-4">
 				{#each steps as step}
 					<div class="relative text-center group">

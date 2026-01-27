@@ -354,10 +354,10 @@
 				Browse hundreds of verified fire and LED performers. Watch their reels, read reviews, and book directly.
 			</p>
 			<div class="flex flex-col sm:flex-row gap-4 justify-center">
-				<a href="/performers" class="btn-lg bg-white text-primary hover:bg-gray-100 font-semibold px-8">
+				<a href="/performers" class="btn btn-lg bg-white text-primary hover:bg-gray-50 font-semibold px-8 shadow-lg hover:shadow-xl transition-all">
 					Browse Performers
 				</a>
-				<a href="/auth/signup" class="btn-lg bg-white/20 hover:bg-white/30 text-white font-semibold px-8">
+				<a href="/auth/signup" class="btn btn-lg bg-white/10 text-white hover:bg-white/20 font-semibold px-8 border border-white/20">
 					Create Account
 				</a>
 			</div>

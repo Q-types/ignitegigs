@@ -271,7 +271,7 @@
 				<p class="text-gray-600 mb-6 max-w-md mx-auto">
 					We couldn't find any performers matching your criteria. Try adjusting your filters or search terms.
 				</p>
-				<button class="btn-primary" onclick={clearFilters}>
+				<button class="btn-primary btn-md px-6" onclick={clearFilters}>
 					Clear all filters
 				</button>
 			</div>

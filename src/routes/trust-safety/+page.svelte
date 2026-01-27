@@ -836,13 +836,13 @@
 			<div class="flex flex-col sm:flex-row gap-4 justify-center">
 				<a
 					href="/auth/signup?type=performer"
-					class="btn-lg bg-white text-primary hover:bg-gray-100 font-semibold px-8"
+					class="btn btn-lg bg-white text-primary hover:bg-gray-50 font-semibold px-8 shadow-lg hover:shadow-xl transition-all"
 				>
 					Join as Performer
 				</a>
 				<a
 					href="/performers"
-					class="btn-lg bg-white/10 text-white hover:bg-white/20 font-semibold px-8 border border-white/30"
+					class="btn btn-lg bg-white/10 text-white hover:bg-white/20 font-semibold px-8 border border-white/20"
 				>
 					Browse Performers
 				</a>

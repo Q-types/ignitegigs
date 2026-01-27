@@ -11,17 +11,17 @@
 		<div class="flex items-center justify-between h-14 md:h-16">
 			<!-- Logo: Symbol only on mobile, full horizontal on desktop -->
 			<a href="/" class="flex items-center">
-				<!-- Mobile: Symbol only (28-32px) -->
+				<!-- Mobile: Symbol only (36px for legibility) -->
 				<img
 					src="/ignitegigs-symbol.png"
 					alt="IgniteGigs"
-					class="md:hidden h-8 w-auto rounded-md"
+					class="md:hidden h-9 w-auto rounded-md"
 				/>
-				<!-- Desktop: Full horizontal logo (40px for prominence) -->
+				<!-- Desktop: Full horizontal logo (44px for prominence and legibility) -->
 				<img
 					src="/ignitegigs-logo-horizontal.png"
 					alt="IgniteGigs"
-					class="hidden md:block h-10 w-auto rounded-md"
+					class="hidden md:block h-11 w-auto rounded-md"
 				/>
 			</a>
 

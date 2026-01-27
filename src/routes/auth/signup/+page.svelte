@@ -54,7 +54,7 @@
 		<!-- Header -->
 		<div class="text-center mb-8">
 			<a href="/" class="inline-block mb-6">
-				<img src="/ignitegigs-logo-horizontal.png" alt="IgniteGigs" class="h-12 w-auto rounded-md mx-auto" />
+				<img src="/ignitegigs-logo-horizontal.png" alt="IgniteGigs" class="h-14 w-auto rounded-md mx-auto" />
 			</a>
 			<h1 class="font-display text-3xl font-bold text-secondary mb-2">
 				Create your account

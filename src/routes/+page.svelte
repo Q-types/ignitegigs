@@ -10,7 +10,7 @@
 
 <!-- Hero Section -->
 <section class="bg-gradient-to-br from-secondary via-secondary to-gray-900 text-white overflow-hidden">
-	<div class="container-wide py-16 md:py-24">
+	<div class="container-wide py-8 md:py-12">
 		<div class="grid lg:grid-cols-2 gap-12 items-center">
 			<!-- Left: Content -->
 			<div>

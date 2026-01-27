@@ -83,7 +83,7 @@
 					<img
 						src="/ignitegigs-symbol.png"
 						alt="IgniteGigs"
-						class="relative w-80 h-80 object-contain drop-shadow-2xl"
+						class="relative w-[700px] h-[700px] xl:w-[900px] xl:h-[900px] object-contain drop-shadow-2xl"
 					/>
 				</div>
 			</div>

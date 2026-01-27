@@ -8,10 +8,21 @@
 
 <header class="bg-white border-b border-gray-100 sticky top-0 z-50">
 	<nav class="container-wide">
-		<div class="flex items-center justify-between h-16">
-			<!-- Logo -->
-			<a href="/" class="flex items-center gap-2">
-				<img src="/ignitegigs-logo-horizontal.png" alt="IgniteGigs" class="h-9 w-auto rounded" />
+		<div class="flex items-center justify-between h-14 md:h-16">
+			<!-- Logo: Symbol only on mobile, full horizontal on desktop -->
+			<a href="/" class="flex items-center">
+				<!-- Mobile: Symbol only (28-32px) -->
+				<img
+					src="/ignitegigs-symbol.png"
+					alt="IgniteGigs"
+					class="md:hidden h-8 w-auto rounded-md"
+				/>
+				<!-- Desktop: Full horizontal logo (40px for prominence) -->
+				<img
+					src="/ignitegigs-logo-horizontal.png"
+					alt="IgniteGigs"
+					class="hidden md:block h-10 w-auto rounded-md"
+				/>
 			</a>
 
 			<!-- Desktop Navigation -->

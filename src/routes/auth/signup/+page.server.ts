@@ -116,11 +116,8 @@ export const actions: Actions = {
 				});
 			}
 
-			// In development, show the actual Supabase error for debugging.
-			// In production, show a generic message but include the error code.
-			const errorMessage = dev
-				? `Signup failed: ${error.message} (status: ${error.status})`
-				: `Unable to create account. Please try again. (Code: ${error.status || 'unknown'})`;
+			// Show the actual Supabase error for debugging
+			const errorMessage = `Signup failed: ${error.message} (status: ${error.status})`;
 
 			return fail(error.status || 500, {
 				error: errorMessage,

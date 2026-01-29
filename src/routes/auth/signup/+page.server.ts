@@ -1,4 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
+import { dev } from '$app/environment';
 import type { Actions, PageServerLoad } from './$types';
 import { getSafeRedirectUrl } from '$lib/server/security';
 
@@ -63,7 +64,7 @@ export const actions: Actions = {
 			});
 		}
 
-		// Sign up with Supabase
+		// Sign up with Supabase Auth
 		const { data, error } = await supabase.auth.signUp({
 			email,
 			password,
@@ -77,9 +78,9 @@ export const actions: Actions = {
 		});
 
 		if (error) {
-			console.error('Signup error:', error);
+			console.error('Signup error:', error.message, error.status, error);
 
-			if (error.message.includes('already registered')) {
+			if (error.message.includes('already registered') || error.message.includes('already been registered')) {
 				return fail(400, {
 					error: 'An account with this email already exists. Try logging in instead.',
 					email,
@@ -88,8 +89,41 @@ export const actions: Actions = {
 				});
 			}
 
-			return fail(500, {
-				error: 'Unable to create account. Please try again.',
+			if (error.message.includes('password') && error.message.includes('least')) {
+				return fail(400, {
+					error: error.message,
+					email,
+					fullName,
+					accountType
+				});
+			}
+
+			if (error.message.includes('valid email') || error.message.includes('invalid')) {
+				return fail(400, {
+					error: 'Please enter a valid email address.',
+					email,
+					fullName,
+					accountType
+				});
+			}
+
+			if (error.message.includes('rate limit') || error.status === 429) {
+				return fail(429, {
+					error: 'Too many signup attempts. Please wait a moment and try again.',
+					email,
+					fullName,
+					accountType
+				});
+			}
+
+			// In development, show the actual Supabase error for debugging.
+			// In production, show a generic message but include the error code.
+			const errorMessage = dev
+				? `Signup failed: ${error.message} (status: ${error.status})`
+				: `Unable to create account. Please try again. (Code: ${error.status || 'unknown'})`;
+
+			return fail(error.status || 500, {
+				error: errorMessage,
 				email,
 				fullName,
 				accountType
@@ -104,6 +138,46 @@ export const actions: Actions = {
 				fullName,
 				accountType
 			});
+		}
+
+		// After successful auth signup, create the public.users record and
+		// performer profile if needed. The auth callback handles this for OAuth,
+		// but email/password signup needs it here. The handle_new_user DB trigger
+		// also creates this record, so duplicate key errors are expected and safe.
+		if (data?.user) {
+			try {
+				const { error: userInsertError } = await supabase.from('users').insert({
+					id: data.user.id,
+					email: email,
+					full_name: fullName,
+					user_type: accountType || 'performer'
+				});
+
+				if (userInsertError) {
+					// This may fail with a duplicate key error if the DB trigger
+					// already created the record -- that is expected and safe.
+					console.error('Error creating user record after signup:', userInsertError);
+				}
+
+				// If signing up as a performer, create the initial performer profile
+				if (!userInsertError && (accountType === 'performer' || !accountType)) {
+					const { error: profileError } = await supabase.from('performer_profiles').insert({
+						user_id: data.user.id,
+						location_name: 'Not set',
+						performer_category: [],
+						act_types: [],
+						is_active: false,
+						profile_complete: false
+					});
+
+					if (profileError) {
+						console.error('Error creating performer profile after signup:', profileError);
+					}
+				}
+			} catch (profileCreationError) {
+				// Log but don't block signup for profile creation errors
+				console.error('Unexpected error creating user profile:', profileCreationError);
+			}
 		}
 
 		// Check if email confirmation is required
@@ -136,9 +210,12 @@ export const actions: Actions = {
 		});
 
 		if (error) {
-			console.error('Google OAuth error:', error);
+			console.error('Google OAuth error:', error.message, error.status, error);
+			const errorMessage = dev
+				? `Google sign-up failed: ${error.message}`
+				: 'Unable to sign up with Google. Please try again.';
 			return fail(500, {
-				error: 'Unable to sign up with Google. Please try again.'
+				error: errorMessage
 			});
 		}
 

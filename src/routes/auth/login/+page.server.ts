@@ -1,4 +1,5 @@
 import { fail, redirect } from '@sveltejs/kit';
+import { dev } from '$app/environment';
 import type { Actions, PageServerLoad } from './$types';
 import { getSafeRedirectUrl } from '$lib/server/security';
 
@@ -45,9 +46,20 @@ export const actions: Actions = {
 		});
 
 		if (error) {
-			console.error('Magic link error:', error);
-			return fail(500, {
-				error: 'Unable to send magic link. Please try again.',
+			console.error('Magic link error:', error.message, error.status, error);
+
+			if (error.message.includes('rate limit') || error.status === 429) {
+				return fail(429, {
+					error: 'Too many attempts. Please wait a moment and try again.',
+					email
+				});
+			}
+
+			const errorMessage = dev
+				? `Magic link failed: ${error.message} (status: ${error.status})`
+				: 'Unable to send magic link. Please try again.';
+			return fail(error.status || 500, {
+				error: errorMessage,
 				email
 			});
 		}
@@ -78,9 +90,29 @@ export const actions: Actions = {
 		});
 
 		if (error) {
-			console.error('Password login error:', error);
+			console.error('Password login error:', error.message, error.status, error);
+
+			if (error.message.includes('Email not confirmed')) {
+				return fail(400, {
+					error: 'Please confirm your email address before logging in. Check your inbox for the confirmation link.',
+					email
+				});
+			}
+
+			if (error.message.includes('rate limit') || error.status === 429) {
+				return fail(429, {
+					error: 'Too many login attempts. Please wait a moment and try again.',
+					email
+				});
+			}
+
+			// For invalid credentials, show a generic message (security best practice)
+			// but in dev, show the real error
+			const errorMessage = dev
+				? `Login failed: ${error.message} (status: ${error.status})`
+				: 'Invalid email or password';
 			return fail(400, {
-				error: 'Invalid email or password',
+				error: errorMessage,
 				email
 			});
 		}
@@ -100,9 +132,12 @@ export const actions: Actions = {
 		});
 
 		if (error) {
-			console.error('Google OAuth error:', error);
+			console.error('Google OAuth error:', error.message, error.status, error);
+			const errorMessage = dev
+				? `Google sign-in failed: ${error.message}`
+				: 'Unable to sign in with Google. Please try again.';
 			return fail(500, {
-				error: 'Unable to sign in with Google. Please try again.'
+				error: errorMessage
 			});
 		}
 

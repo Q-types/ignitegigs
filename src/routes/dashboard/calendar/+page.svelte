@@ -2,6 +2,7 @@
 	import { goto } from '$app/navigation';
 	import { enhance } from '$app/forms';
 	import { Modal, Badge } from '$lib/components/ui';
+	import { CalendarSync, CancellationPolicySettings } from '$lib/components/dashboard';
 	import type { ActionData } from './$types';
 
 	let { data, form }: { data: typeof import('./$types').PageData; form: ActionData } = $props();
@@ -106,12 +107,16 @@
 	}
 </script>
 
+<svelte:head>
+	<title>Calendar - IgniteGigs Dashboard</title>
+</svelte:head>
+
 <div class="space-y-6">
 	<!-- Header -->
 	<div class="flex items-center justify-between">
 		<div>
 			<h1 class="font-display text-2xl font-bold text-secondary">Availability Calendar</h1>
-			<p class="text-gray-600">Manage your availability for bookings</p>
+			<p class="text-gray-600">Manage your availability and sync with your calendar app.</p>
 		</div>
 		<button
 			class="btn-outline btn-sm {isMultiSelect ? 'bg-primary/10 border-primary text-primary' : ''}"
@@ -144,87 +149,104 @@
 		</div>
 	</div>
 
-	<!-- Calendar -->
-	<div class="bg-white rounded-card shadow-card overflow-hidden">
-		<!-- Month Navigation -->
-		<div class="flex items-center justify-between p-4 border-b border-gray-100">
-			<button class="p-2 hover:bg-gray-100 rounded-lg" onclick={prevMonth}>
-				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
-				</svg>
-			</button>
-			<h2 class="font-display text-xl font-semibold text-secondary">
-				{monthNames[data.month - 1]} {data.year}
-			</h2>
-			<button class="p-2 hover:bg-gray-100 rounded-lg" onclick={nextMonth}>
-				<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-					<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-				</svg>
-			</button>
-		</div>
-
-		<!-- Day Headers -->
-		<div class="grid grid-cols-7 bg-gray-50">
-			{#each dayNames as day}
-				<div class="p-3 text-center text-sm font-medium text-gray-500">
-					{day}
-				</div>
-			{/each}
-		</div>
-
-		<!-- Calendar Grid -->
-		<div class="grid grid-cols-7">
-			{#each calendarDays as { date, day }}
-				{#if date}
-					{@const status = getDateStatus(date)}
-					{@const booking = getBookingForDate(date)}
-					{@const isPast = isPastDate(date)}
-					{@const isSelected = selectedDates.has(date)}
-					<button
-						class="aspect-square p-2 border-t border-r border-gray-100 text-left transition-colors relative
-							{isPast ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'}
-							{status === 'available' ? 'bg-success/10' : ''}
-							{status === 'unavailable' ? 'bg-gray-100' : ''}
-							{status === 'booked' ? 'bg-primary/10' : ''}
-							{isSelected ? 'ring-2 ring-primary ring-inset' : ''}"
-						disabled={isPast}
-						onclick={() => !isPast && selectDate(date)}
-					>
-						<span class="text-sm font-medium {status === 'booked' ? 'text-primary' : ''}">{day}</span>
-						{#if booking}
-							<div class="mt-1">
-								<span class="text-xs text-primary truncate block">
-									{booking.event_type || 'Booking'}
-								</span>
-							</div>
-						{/if}
+	<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+		<!-- Calendar (Main Area) -->
+		<div class="lg:col-span-2 space-y-6">
+			<div class="bg-white rounded-card shadow-card overflow-hidden">
+				<!-- Month Navigation -->
+				<div class="flex items-center justify-between p-4 border-b border-gray-100">
+					<button class="p-2 hover:bg-gray-100 rounded-lg" onclick={prevMonth}>
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+						</svg>
 					</button>
-				{:else}
-					<div class="aspect-square border-t border-r border-gray-100 bg-gray-50"></div>
-				{/if}
-			{/each}
+					<h2 class="font-display text-xl font-semibold text-secondary">
+						{monthNames[data.month - 1]} {data.year}
+					</h2>
+					<button class="p-2 hover:bg-gray-100 rounded-lg" onclick={nextMonth}>
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+						</svg>
+					</button>
+				</div>
+
+				<!-- Day Headers -->
+				<div class="grid grid-cols-7 bg-gray-50">
+					{#each dayNames as day}
+						<div class="p-3 text-center text-sm font-medium text-gray-500">
+							{day}
+						</div>
+					{/each}
+				</div>
+
+				<!-- Calendar Grid -->
+				<div class="grid grid-cols-7">
+					{#each calendarDays as { date, day }}
+						{#if date}
+							{@const status = getDateStatus(date)}
+							{@const booking = getBookingForDate(date)}
+							{@const isPast = isPastDate(date)}
+							{@const isSelected = selectedDates.has(date)}
+							<button
+								class="aspect-square p-2 border-t border-r border-gray-100 text-left transition-colors relative
+									{isPast ? 'bg-gray-50 text-gray-400 cursor-not-allowed' : 'hover:bg-gray-50 cursor-pointer'}
+									{status === 'available' ? 'bg-success/10' : ''}
+									{status === 'unavailable' ? 'bg-gray-100' : ''}
+									{status === 'booked' ? 'bg-primary/10' : ''}
+									{isSelected ? 'ring-2 ring-primary ring-inset' : ''}"
+								disabled={isPast}
+								onclick={() => !isPast && selectDate(date)}
+							>
+								<span class="text-sm font-medium {status === 'booked' ? 'text-primary' : ''}">{day}</span>
+								{#if booking}
+									<div class="mt-1">
+										<span class="text-xs text-primary truncate block">
+											{booking.event_type || 'Booking'}
+										</span>
+									</div>
+								{/if}
+							</button>
+						{:else}
+							<div class="aspect-square border-t border-r border-gray-100 bg-gray-50"></div>
+						{/if}
+					{/each}
+				</div>
+			</div>
+
+			<!-- Multi-Select Actions -->
+			{#if isMultiSelect && selectedDates.size > 0}
+				<div class="bg-white rounded-card shadow-card p-4">
+					<p class="text-sm text-gray-600 mb-4">
+						{selectedDates.size} date{selectedDates.size > 1 ? 's' : ''} selected
+					</p>
+					<form method="POST" action="?/bulkUpdate" use:enhance class="flex gap-3">
+						{#each Array.from(selectedDates) as date}
+							<input type="hidden" name="dates" value={date} />
+						{/each}
+						<button type="submit" name="isAvailable" value="true" class="btn-primary btn-sm">
+							Mark Available
+						</button>
+						<button type="submit" name="isAvailable" value="false" class="btn-outline btn-sm">
+							Mark Unavailable
+						</button>
+					</form>
+				</div>
+			{/if}
+		</div>
+
+		<!-- Sidebar: Calendar Sync + Cancellation Policy -->
+		<div class="space-y-6">
+			{#if data.performerProfile}
+				<CalendarSync
+					performerId={data.performerProfile.id}
+					performerName={data.performerProfile.stage_name || 'Performer'}
+				/>
+				<CancellationPolicySettings
+					currentPolicy={data.performerProfile.cancellation_policy || 'standard'}
+				/>
+			{/if}
 		</div>
 	</div>
-
-	<!-- Multi-Select Actions -->
-	{#if isMultiSelect && selectedDates.size > 0}
-		<div class="bg-white rounded-card shadow-card p-4">
-			<p class="text-sm text-gray-600 mb-4">
-				{selectedDates.size} date{selectedDates.size > 1 ? 's' : ''} selected
-			</p>
-			<form method="POST" action="?/bulkUpdate" use:enhance class="flex gap-3">
-				{#each Array.from(selectedDates) as date}
-					<input type="hidden" name="dates" value={date} />
-				{/each}
-				<button type="submit" name="isAvailable" value="true" class="btn-primary btn-sm">
-					Mark Available
-				</button>
-				<button type="submit" name="isAvailable" value="false" class="btn-outline btn-sm">
-					Mark Unavailable
-				</button>
-			</form>
-		</div>
-	{/if}
 </div>
 
 <!-- Day Detail Modal -->

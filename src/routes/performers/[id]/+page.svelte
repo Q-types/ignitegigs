@@ -1,6 +1,8 @@
 <script lang="ts">
-	import { Rating, Badge, Avatar, Modal, VideoCard } from '$lib/components/ui';
+	import { Rating, Badge, Avatar, Modal, VideoCard, ShareButtons } from '$lib/components/ui';
+	import { page } from '$app/stores';
 	import { VideoGallery } from '$lib/components/performer';
+	import JsonLd from '$lib/components/JsonLd.svelte';
 	import type { PerformerProfile, PerformerMedia, Availability } from '$lib/types/database';
 
 	interface PerformerPageData {
@@ -29,6 +31,35 @@
 	let primaryVideo = $derived(data.media.find((m) => m.media_type === 'video' && m.is_primary));
 	let videos = $derived(data.media.filter((m) => m.media_type === 'video'));
 	let photos = $derived(data.media.filter((m) => m.media_type === 'photo'));
+
+	let performerSchema = $derived(
+		Object.fromEntries(
+			Object.entries({
+				'@context': 'https://schema.org',
+				'@type': 'PerformingGroup',
+				name: performer.stage_name || performer.user?.full_name,
+				description: performer.tagline || performer.bio?.slice(0, 250),
+				url: $page.url.href,
+				image: photos[0]?.url,
+				address: performer.location_name
+					? { '@type': 'PostalAddress', addressLocality: performer.location_name }
+					: undefined,
+				priceRange: performer.min_rate_pence
+					? `From \u00a3${(performer.min_rate_pence / 100).toFixed(0)}`
+					: undefined,
+				aggregateRating:
+					performer.avg_rating && performer.total_reviews
+						? {
+								'@type': 'AggregateRating',
+								ratingValue: performer.avg_rating,
+								reviewCount: performer.total_reviews,
+								bestRating: 5,
+								worstRating: 1
+							}
+						: undefined
+			}).filter(([, v]) => v !== undefined)
+		) as Record<string, unknown>
+	);
 
 	function formatPrice(pence: number | null): string {
 		if (!pence) return 'Contact for rates';
@@ -60,6 +91,8 @@
 	/>
 </svelte:head>
 
+<JsonLd schema={performerSchema} />
+
 <div class="min-h-screen bg-gray-50">
 	<!-- Hero Section with Video/Image -->
 	<div class="relative bg-secondary">
@@ -72,6 +105,7 @@
 							src={primaryVideo.url}
 							poster={primaryVideo.thumbnail_url || undefined}
 							controls
+							fetchpriority="high"
 							class="w-full h-full object-cover"
 						>
 							<track kind="captions" />
@@ -80,6 +114,7 @@
 						<img
 							src={photos[0].url}
 							alt={performer.stage_name || 'Performer'}
+							fetchpriority="high"
 							class="w-full h-full object-cover"
 						/>
 					{:else}
@@ -409,23 +444,11 @@
 				<!-- Share -->
 				<div class="bg-white rounded-card shadow-card p-6">
 					<h3 class="font-display text-lg font-semibold text-secondary mb-4">Share</h3>
-					<div class="flex gap-3">
-						<button class="flex-1 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors" aria-label="Share on Facebook">
-							<svg class="w-5 h-5 mx-auto text-[#1877F2]" fill="currentColor" viewBox="0 0 24 24">
-								<path d="M18.77 7.46H14.5v-1.9c0-.9.6-1.1 1-1.1h3V.5h-4.33C10.24.5 9.5 3.44 9.5 5.32v2.15h-3v4h3v12h5v-12h3.85l.42-4z" />
-							</svg>
-						</button>
-						<button class="flex-1 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors" aria-label="Share on X">
-							<svg class="w-5 h-5 mx-auto" fill="currentColor" viewBox="0 0 24 24">
-								<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-							</svg>
-						</button>
-						<button class="flex-1 p-3 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors" aria-label="Copy link">
-							<svg class="w-5 h-5 mx-auto text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3" />
-							</svg>
-						</button>
-					</div>
+					<ShareButtons
+						url={$page.url.href}
+						title="{performer.stage_name || performer.user?.full_name} - IgniteGigs"
+						description={performer.tagline || performer.bio?.slice(0, 160) || 'Check out this performer on IgniteGigs!'}
+					/>
 				</div>
 			</div>
 		</div>

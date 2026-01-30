@@ -23,20 +23,31 @@
 	function getPriceRange(): string {
 		const min = performer.min_rate_pence;
 		const eventRate = performer.event_rate_pence;
-		if (min && eventRate) {
-			return `${formatPrice(min)} - ${formatPrice(eventRate)}`;
+		const showRate = performer.show_rate_pence;
+		const lowest = min || showRate || eventRate;
+		const highest = eventRate || showRate || min;
+		if (lowest && highest && lowest !== highest) {
+			return `${formatPrice(lowest)} - ${formatPrice(highest)}`;
 		}
-		return formatPrice(min || eventRate);
+		return formatPrice(lowest || highest);
 	}
 
 	// Get category label
 	function getCategoryLabel(): string {
 		const categories = performer.performer_category || [];
-		if (categories.includes('fire') && categories.includes('led')) {
-			return 'Fire & LED';
-		}
+		if (categories.includes('fire') && categories.includes('led')) return 'Fire & LED';
 		if (categories.includes('fire')) return 'Fire';
 		if (categories.includes('led')) return 'LED';
+		if (categories.includes('circus')) return 'Circus';
+		if (categories.includes('aerial')) return 'Aerial';
+		if (categories.includes('dance')) return 'Dance';
+		if (categories.includes('juggling')) return 'Juggling';
+		if (categories.includes('acrobatics')) return 'Acrobatics';
+		if (categories.includes('magic')) return 'Magic';
+		if (categories.includes('comedy')) return 'Comedy';
+		if (categories.includes('walkabout')) return 'Walkabout';
+		if (categories.includes('caricature')) return 'Caricature';
+		if (categories.includes('stilt')) return 'Stilt Walking';
 		return 'Performer';
 	}
 
@@ -99,6 +110,8 @@
 			<img
 				src={performer.primary_media.thumbnail_url || performer.primary_media.url}
 				alt={performer.stage_name || 'Performer'}
+				loading="lazy"
+				decoding="async"
 				class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
 			/>
 		{:else}
@@ -123,6 +136,8 @@
 				<span class="badge-fire">Fire</span>
 			{:else if performer.performer_category?.includes('led')}
 				<span class="badge-led">LED</span>
+			{:else if performer.performer_category?.length > 0}
+				<span class="badge bg-secondary/90 text-white">{getCategoryLabel()}</span>
 			{/if}
 		</div>
 

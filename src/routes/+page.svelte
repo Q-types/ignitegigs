@@ -1,12 +1,45 @@
 <script lang="ts">
+	import JsonLd from '$lib/components/JsonLd.svelte';
+
 	let searchLocation = $state('');
 	let searchDate = $state('');
+
+	const organizationSchema: Record<string, unknown> = {
+		'@context': 'https://schema.org',
+		'@type': 'Organization',
+		name: 'IgniteGigs',
+		url: 'https://ignitegigs.com',
+		logo: 'https://ignitegigs.com/logo.png',
+		description:
+			'The performer-owned platform where entertainers keep 92% and clients skip the agency markup.',
+		sameAs: [],
+		contactPoint: {
+			'@type': 'ContactPoint',
+			contactType: 'customer service',
+			url: 'https://ignitegigs.com/contact'
+		}
+	};
+
+	const websiteSchema: Record<string, unknown> = {
+		'@context': 'https://schema.org',
+		'@type': 'WebSite',
+		name: 'IgniteGigs',
+		url: 'https://ignitegigs.com',
+		potentialAction: {
+			'@type': 'SearchAction',
+			target: 'https://ignitegigs.com/performers?search={search_term}',
+			'query-input': 'required name=search_term'
+		}
+	};
 </script>
 
 <svelte:head>
 	<title>IgniteGigs - Book Fire & LED Performers Directly</title>
 	<meta name="description" content="The performer-owned platform where entertainers keep 92% and clients skip the agency markup. Book fire performers and LED artists directly." />
 </svelte:head>
+
+<JsonLd schema={organizationSchema} />
+<JsonLd schema={websiteSchema} />
 
 <!-- Hero Section -->
 <section class="bg-gradient-to-br from-secondary via-secondary to-gray-900 text-white overflow-hidden">
@@ -83,8 +116,64 @@
 					<img
 						src="/ignitegigs-symbol.png"
 						alt="IgniteGigs"
+						fetchpriority="high"
 						class="relative w-[700px] h-[700px] xl:w-[900px] xl:h-[900px] object-contain drop-shadow-2xl"
 					/>
+				</div>
+			</div>
+		</div>
+	</div>
+</section>
+
+<!-- Event Vibe Quiz CTA -->
+<section class="py-12 md:py-16 bg-white">
+	<div class="container-wide">
+		<div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-secondary via-[#1a1a2e] to-[#16162a] p-8 md:p-12">
+			<!-- Decorative glow -->
+			<div class="absolute top-0 right-0 w-64 h-64 bg-primary/20 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2"></div>
+			<div class="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/15 blur-3xl rounded-full translate-y-1/2 -translate-x-1/4"></div>
+
+			<div class="relative grid md:grid-cols-2 gap-8 items-center">
+				<div>
+					<span class="inline-block px-3 py-1 bg-primary/20 text-primary rounded-full text-sm font-semibold mb-4">
+						60-Second Quiz
+					</span>
+					<h2 class="font-display text-2xl md:text-3xl lg:text-4xl font-bold text-white mb-4">
+						Not sure what you need?
+					</h2>
+					<p class="text-gray-300 text-lg mb-6">
+						Take our Event Vibe Quiz to find your perfect performer. Answer 5 quick questions and we will match you with the best acts for your event.
+					</p>
+					<a href="/discover" class="btn-primary btn-lg inline-flex items-center gap-2 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-all duration-200 hover:scale-105">
+						<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+						</svg>
+						Find Your Vibe
+					</a>
+				</div>
+
+				<!-- Visual quiz preview cards -->
+				<div class="hidden md:grid grid-cols-2 gap-3">
+					<div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 transform rotate-2 hover:rotate-0 transition-transform">
+						<span class="text-2xl mb-2 block">🎪</span>
+						<p class="text-white font-medium text-sm">What's the occasion?</p>
+						<p class="text-gray-400 text-xs mt-1">Wedding, party, festival...</p>
+					</div>
+					<div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 transform -rotate-1 hover:rotate-0 transition-transform">
+						<span class="text-2xl mb-2 block">🔥</span>
+						<p class="text-white font-medium text-sm">What's the vibe?</p>
+						<p class="text-gray-400 text-xs mt-1">Elegant, wild, enchanting...</p>
+					</div>
+					<div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 transform -rotate-2 hover:rotate-0 transition-transform">
+						<span class="text-2xl mb-2 block">🏛️</span>
+						<p class="text-white font-medium text-sm">Where's it happening?</p>
+						<p class="text-gray-400 text-xs mt-1">Indoor, outdoor, stage...</p>
+					</div>
+					<div class="bg-white/10 backdrop-blur-sm rounded-xl p-4 border border-white/10 transform rotate-1 hover:rotate-0 transition-transform">
+						<span class="text-2xl mb-2 block">✨</span>
+						<p class="text-white font-medium text-sm">Perfect matches!</p>
+						<p class="text-gray-400 text-xs mt-1">Tailored just for you</p>
+					</div>
 				</div>
 			</div>
 		</div>

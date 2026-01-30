@@ -1,7 +1,9 @@
 import { error, fail, redirect } from '@sveltejs/kit';
 import type { PageServerLoad, Actions } from './$types';
 import { sendNewBookingRequestEmail } from '$lib/server/email';
+import { createNotification } from '$lib/server/notifications';
 import { safeParseInt, sanitizeForLog } from '$lib/server/security';
+import { checkFormRateLimit } from '$lib/server/rateLimit';
 
 export const load: PageServerLoad = async ({ params, locals: { supabase, session } }) => {
 	// Require authentication
@@ -51,10 +53,21 @@ export const load: PageServerLoad = async ({ params, locals: { supabase, session
 		.gte('date', today)
 		.lte('date', ninetyDaysLater);
 
+	// Fetch dates that already have active bookings (for concurrent booking prevention)
+	const { data: activeBookings } = await supabase
+		.from('bookings')
+		.select('event_date')
+		.eq('performer_id', performerId)
+		.not('status', 'in', '("cancelled","declined")')
+		.gte('event_date', today);
+
+	const bookedDates = (activeBookings ?? []).map((b) => b.event_date);
+
 	return {
 		performer,
 		currentUser,
-		availability: availability ?? []
+		availability: availability ?? [],
+		bookedDates
 	};
 };
 
@@ -63,6 +76,10 @@ export const actions: Actions = {
 		if (!session) {
 			throw redirect(303, '/auth/login');
 		}
+
+		// Rate limit: 10 booking requests per minute per IP
+		const blocked = checkFormRateLimit(request, 'booking');
+		if (blocked) return blocked;
 
 		const { performerId } = params;
 		const formData = await request.formData();
@@ -95,6 +112,26 @@ export const actions: Actions = {
 		if (selectedDate < today) {
 			return fail(400, {
 				error: 'Event date must be in the future',
+				eventDate,
+				eventTime,
+				eventLocation,
+				eventType,
+				eventDetails
+			});
+		}
+
+		// Check for existing active booking on this date (concurrent booking prevention)
+		const { data: existingBooking } = await supabase
+			.from('bookings')
+			.select('id')
+			.eq('performer_id', performerId)
+			.eq('event_date', eventDate)
+			.not('status', 'in', '("cancelled","declined")')
+			.maybeSingle();
+
+		if (existingBooking) {
+			return fail(400, {
+				error: 'This performer is already booked on this date. Please choose another date.',
 				eventDate,
 				eventTime,
 				eventLocation,
@@ -147,6 +184,19 @@ export const actions: Actions = {
 
 		if (bookingError) {
 			console.error('Error creating booking:', sanitizeForLog(bookingError));
+
+			// Handle unique constraint violation (concurrent booking prevention at DB level)
+			if (bookingError.code === '23505' || bookingError.message?.includes('already has a booking')) {
+				return fail(400, {
+					error: 'This performer is already booked on this date. Please choose another date.',
+					eventDate,
+					eventTime,
+					eventLocation,
+					eventType,
+					eventDetails
+				});
+			}
+
 			return fail(500, { error: 'Failed to create booking request. Please try again.' });
 		}
 
@@ -173,6 +223,15 @@ export const actions: Actions = {
 				// Don't fail the booking just because email failed
 			}
 		}
+
+		// In-app notification to performer
+		await createNotification(supabase, {
+			userId: performer.user_id,
+			type: 'booking_request',
+			title: 'New Booking Request',
+			body: `${client?.full_name || 'A client'} wants to book you for ${eventDate}`,
+			link: `/dashboard/bookings/${booking.id}`
+		});
 
 		// Redirect to confirmation page or messages
 		throw redirect(303, `/dashboard/bookings/${booking.id}?new=true`);

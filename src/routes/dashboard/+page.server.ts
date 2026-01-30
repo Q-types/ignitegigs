@@ -1,11 +1,12 @@
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => {
-	const { user, performerProfile } = await parent();
+	const { user, performerProfile, isPerformer, isClient } = await parent();
 
 	if (!user) {
 		return {
 			stats: null,
+			clientStats: null,
 			recentBookings: [],
 			upcomingEvents: []
 		};
@@ -14,7 +15,7 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
 	// Fetch stats based on user type
 	const performerId = performerProfile?.id;
 
-	// Get booking stats
+	// Performer stats
 	let bookingStats = {
 		pending: 0,
 		upcoming: 0,
@@ -22,8 +23,7 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
 		totalEarnings: 0
 	};
 
-	if (performerId) {
-		// Performer stats
+	if (isPerformer && performerId) {
 		const { data: bookings } = await supabase
 			.from('bookings')
 			.select('status, agreed_price_pence, performer_payout_pence')
@@ -39,8 +39,32 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
 		}
 	}
 
-	// Get recent bookings
-	const { data: recentBookings } = await supabase
+	// Client stats
+	let clientStats = {
+		pending: 0,
+		upcoming: 0,
+		completed: 0,
+		totalSpent: 0
+	};
+
+	if (isClient) {
+		const { data: clientBookings } = await supabase
+			.from('bookings')
+			.select('status, quoted_price_pence, agreed_price_pence, deposit_paid')
+			.eq('client_id', user.id);
+
+		if (clientBookings) {
+			clientStats.pending = clientBookings.filter((b) => ['inquiry', 'pending'].includes(b.status)).length;
+			clientStats.upcoming = clientBookings.filter((b) => ['accepted', 'confirmed'].includes(b.status)).length;
+			clientStats.completed = clientBookings.filter((b) => b.status === 'completed').length;
+			clientStats.totalSpent = clientBookings
+				.filter((b) => b.status === 'completed')
+				.reduce((sum, b) => sum + (b.agreed_price_pence || b.quoted_price_pence || 0), 0);
+		}
+	}
+
+	// Get recent bookings - show performer or client bookings depending on role
+	let recentBookingsQuery = supabase
 		.from('bookings')
 		.select(
 			`
@@ -50,8 +74,17 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
 			),
 			client:users!bookings_client_id_fkey(id, full_name, avatar_url)
 		`
-		)
-		.or(performerId ? `performer_id.eq.${performerId},client_id.eq.${user.id}` : `client_id.eq.${user.id}`)
+		);
+
+	if (isPerformer && performerId) {
+		recentBookingsQuery = recentBookingsQuery.or(
+			`performer_id.eq.${performerId},client_id.eq.${user.id}`
+		);
+	} else {
+		recentBookingsQuery = recentBookingsQuery.eq('client_id', user.id);
+	}
+
+	const { data: recentBookings } = await recentBookingsQuery
 		.order('created_at', { ascending: false })
 		.limit(5);
 
@@ -59,7 +92,7 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
 	const today = new Date().toISOString().split('T')[0];
 	const thirtyDaysLater = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString().split('T')[0];
 
-	const { data: upcomingEvents } = await supabase
+	let upcomingQuery = supabase
 		.from('bookings')
 		.select(
 			`
@@ -69,8 +102,17 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
 			),
 			client:users!bookings_client_id_fkey(id, full_name)
 		`
-		)
-		.or(performerId ? `performer_id.eq.${performerId},client_id.eq.${user.id}` : `client_id.eq.${user.id}`)
+		);
+
+	if (isPerformer && performerId) {
+		upcomingQuery = upcomingQuery.or(
+			`performer_id.eq.${performerId},client_id.eq.${user.id}`
+		);
+	} else {
+		upcomingQuery = upcomingQuery.eq('client_id', user.id);
+	}
+
+	const { data: upcomingEvents } = await upcomingQuery
 		.in('status', ['accepted', 'confirmed'])
 		.gte('event_date', today)
 		.lte('event_date', thirtyDaysLater)
@@ -86,6 +128,7 @@ export const load: PageServerLoad = async ({ parent, locals: { supabase } }) => 
 
 	return {
 		stats: bookingStats,
+		clientStats,
 		recentBookings: recentBookings ?? [],
 		upcomingEvents: upcomingEvents ?? [],
 		unreadMessages: unreadMessages ?? 0

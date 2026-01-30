@@ -18,6 +18,41 @@
 </script>
 
 <div class="space-y-6">
+	<!-- Setup Status Banners -->
+	{#if data.setupStatus === 'complete'}
+		<div class="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-4" role="alert">
+			<svg class="h-5 w-5 flex-shrink-0 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+			</svg>
+			<div>
+				<p class="font-medium text-green-800">Payment setup complete</p>
+				<p class="text-sm text-green-700">Your Stripe account is verified and ready to receive payments.</p>
+			</div>
+		</div>
+	{:else if data.setupStatus === 'pending'}
+		<div class="flex items-center gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4" role="alert">
+			<svg class="h-5 w-5 flex-shrink-0 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+			</svg>
+			<div>
+				<p class="font-medium text-amber-800">Setup still in progress</p>
+				<p class="text-sm text-amber-700">Stripe needs more information to fully verify your account. Click "Continue Setup" below to finish.</p>
+			</div>
+		</div>
+	{/if}
+
+	{#if data.setupError}
+		<div class="flex items-center gap-3 rounded-lg border border-red-200 bg-red-50 p-4" role="alert">
+			<svg class="h-5 w-5 flex-shrink-0 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+				<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+			</svg>
+			<div>
+				<p class="font-medium text-red-800">Something went wrong</p>
+				<p class="text-sm text-red-700">There was a problem connecting your Stripe account. Please try again.</p>
+			</div>
+		</div>
+	{/if}
+
 	<!-- Header -->
 	<div>
 		<h1 class="font-display text-2xl font-bold text-secondary">Payments</h1>

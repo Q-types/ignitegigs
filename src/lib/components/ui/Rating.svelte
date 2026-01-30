@@ -1,143 +1,37 @@
 <script lang="ts">
-	import type { HTMLAttributes } from 'svelte/elements';
-
-	type RatingSize = 'sm' | 'md' | 'lg';
-
-	interface Props extends HTMLAttributes<HTMLDivElement> {
-		value?: number;
-		max?: number;
-		size?: RatingSize;
-		interactive?: boolean;
-		halfStars?: boolean;
-		onRatingChange?: (rating: number) => void;
-	}
-
 	let {
 		value = 0,
-		max = 5,
 		size = 'md',
-		interactive = false,
-		halfStars = false,
-		onRatingChange,
-		class: className = '',
-		...restProps
-	}: Props = $props();
+		max = 5
+	}: {
+		value: number;
+		size?: 'sm' | 'md';
+		max?: number;
+	} = $props();
 
-	let hoverValue = $state<number | null>(null);
-
-	const displayValue = $derived(hoverValue !== null ? hoverValue : value);
-
-	const sizeClasses: Record<RatingSize, string> = {
+	const sizeClasses: Record<string, string> = {
 		sm: 'w-4 h-4',
-		md: 'w-5 h-5',
-		lg: 'w-6 h-6'
+		md: 'w-5 h-5'
 	};
 
-	const gapClasses: Record<RatingSize, string> = {
-		sm: 'gap-0.5',
-		md: 'gap-0.5',
-		lg: 'gap-1'
-	};
-
-	function getStarFill(starIndex: number): 'full' | 'half' | 'empty' {
-		const starValue = starIndex + 1;
-		if (displayValue >= starValue) {
-			return 'full';
-		} else if (halfStars && displayValue >= starValue - 0.5) {
-			return 'half';
-		}
-		return 'empty';
-	}
-
-	function handleClick(starIndex: number, event: MouseEvent) {
-		if (!interactive) return;
-
-		let newRating = starIndex + 1;
-
-		if (halfStars) {
-			const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-			const x = event.clientX - rect.left;
-			if (x < rect.width / 2) {
-				newRating = starIndex + 0.5;
-			}
-		}
-
-		onRatingChange?.(newRating);
-	}
-
-	function handleMouseMove(starIndex: number, event: MouseEvent) {
-		if (!interactive) return;
-
-		let newHover = starIndex + 1;
-
-		if (halfStars) {
-			const rect = (event.currentTarget as HTMLElement).getBoundingClientRect();
-			const x = event.clientX - rect.left;
-			if (x < rect.width / 2) {
-				newHover = starIndex + 0.5;
-			}
-		}
-
-		hoverValue = newHover;
-	}
-
-	function handleMouseLeave() {
-		if (!interactive) return;
-		hoverValue = null;
-	}
-
-	const computedClasses = $derived(
-		['flex items-center text-warning', gapClasses[size], className].filter(Boolean).join(' ')
-	);
+	const stars = $derived(Array.from({ length: max }, (_, i) => i));
 </script>
 
-<div
-	class={computedClasses}
-	role={interactive ? 'radiogroup' : 'img'}
-	aria-label={`Rating: ${value} out of ${max} stars`}
-	{...restProps}
->
-	{#each Array(max) as _, i}
-		{@const fill = getStarFill(i)}
-		<!-- svelte-ignore a11y_click_events_have_key_events -->
-		<span
-			class={sizeClasses[size]}
-			class:cursor-pointer={interactive}
-			role={interactive ? 'radio' : undefined}
-			aria-checked={interactive ? value >= i + 1 : undefined}
-			tabindex={interactive ? 0 : undefined}
-			onclick={(e) => handleClick(i, e)}
-			onmousemove={(e) => handleMouseMove(i, e)}
-			onmouseleave={handleMouseLeave}
+<div class="flex items-center gap-0.5">
+	{#each stars as i}
+		{@const filled = i < Math.floor(value)}
+		{@const partial = !filled && i < value}
+		<svg
+			class="{sizeClasses[size]} {filled || partial ? 'text-yellow-400' : 'text-gray-300'}"
+			viewBox="0 0 20 20"
+			fill={filled || partial ? 'currentColor' : 'none'}
+			stroke={filled || partial ? 'none' : 'currentColor'}
+			stroke-width={filled || partial ? 0 : 1.5}
+			xmlns="http://www.w3.org/2000/svg"
 		>
-			{#if fill === 'full'}
-				<svg viewBox="0 0 24 24" fill="currentColor" class="w-full h-full">
-					<path
-						d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-					></path>
-				</svg>
-			{:else if fill === 'half'}
-				<svg viewBox="0 0 24 24" class="w-full h-full">
-					<defs>
-						<linearGradient id="half-{i}">
-							<stop offset="50%" stop-color="currentColor" />
-							<stop offset="50%" stop-color="transparent" />
-						</linearGradient>
-					</defs>
-					<path
-						d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-						fill="url(#half-{i})"
-						stroke="currentColor"
-						stroke-width="1"
-					></path>
-				</svg>
-			{:else}
-				<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="w-full h-full">
-					<path
-						d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"
-					></path>
-				</svg>
-			{/if}
-		</span>
+			<path
+				d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+			/>
+		</svg>
 	{/each}
 </div>

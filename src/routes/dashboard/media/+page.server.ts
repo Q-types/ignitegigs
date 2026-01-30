@@ -200,5 +200,66 @@ export const actions: Actions = {
 		}
 
 		return { success: true };
+	},
+
+	reorder: async ({ request, locals: { supabase, session }, parent }) => {
+		if (!session) {
+			throw redirect(303, '/auth/login');
+		}
+
+		const { performerProfile } = await parent();
+		if (!performerProfile) {
+			return fail(400, { error: 'No performer profile found' });
+		}
+
+		const formData = await request.formData();
+		const itemsJson = formData.get('items') as string;
+
+		if (!itemsJson) {
+			return fail(400, { error: 'No reorder data provided' });
+		}
+
+		let items: { id: string; sort_order: number }[];
+		try {
+			items = JSON.parse(itemsJson);
+		} catch {
+			return fail(400, { error: 'Invalid reorder data' });
+		}
+
+		if (!Array.isArray(items) || items.length === 0) {
+			return fail(400, { error: 'Invalid reorder data' });
+		}
+
+		// Verify all items belong to this performer
+		const { data: existingMedia } = await supabase
+			.from('performer_media')
+			.select('id')
+			.eq('performer_id', performerProfile.id)
+			.in(
+				'id',
+				items.map((i) => i.id)
+			);
+
+		if (!existingMedia || existingMedia.length !== items.length) {
+			return fail(400, { error: 'Some media items were not found' });
+		}
+
+		// Update sort orders
+		const updates = items.map((item) =>
+			supabase
+				.from('performer_media')
+				.update({ sort_order: item.sort_order })
+				.eq('id', item.id)
+				.eq('performer_id', performerProfile.id)
+		);
+
+		const results = await Promise.all(updates);
+		const hasError = results.some((r) => r.error);
+
+		if (hasError) {
+			return fail(500, { error: 'Failed to reorder media' });
+		}
+
+		return { success: true, message: 'Media order updated' };
 	}
 };

@@ -1,0 +1,29 @@
+{
+	"name": "IgniteGigs",
+	"short_name": "IgniteGigs",
+	"description": "Book fire and LED performers directly",
+	"start_url": "/",
+	"display": "standalone",
+	"theme_color": "#1E1E2E",
+	"background_color": "#f5f5f5",
+	"icons": [
+		{
+			"src": "/favicon.png",
+			"sizes": "64x64",
+			"type": "image/png"
+		},
+		{
+			"src": "/icon-192.png",
+			"sizes": "192x192",
+			"type": "image/png",
+			"purpose": "any maskable"
+		},
+		{
+			"src": "/icon-512.png",
+			"sizes": "512x512",
+			"type": "image/png",
+			"purpose": "any maskable"
+		}
+	],
+	"categories": ["entertainment", "business"]
+}

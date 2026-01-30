@@ -78,7 +78,7 @@ const supabaseHandle: Handle = async ({ event, resolve }) => {
 
 const authGuardHandle: Handle = async ({ event, resolve }) => {
 	// Protected routes that require authentication
-	const protectedRoutes = ['/dashboard', '/bookings', '/messages', '/settings', '/profile/edit'];
+	const protectedRoutes = ['/dashboard', '/admin', '/bookings', '/messages', '/settings', '/profile/edit'];
 
 	const isProtectedRoute = protectedRoutes.some((route) => event.url.pathname.startsWith(route));
 

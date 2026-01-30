@@ -18,7 +18,10 @@ async function sendEmail({ to, subject, html }: EmailData) {
 			from: FROM_EMAIL,
 			to,
 			subject,
-			html
+			html,
+			headers: {
+				'List-Unsubscribe': `<${PUBLIC_APP_URL}/dashboard/notifications>`
+			}
 		});
 
 		if (error) {
@@ -97,8 +100,11 @@ function emailWrapper(content: string): string {
 							<p style="margin: 0 0 8px; color: #6b7280; font-size: 14px;">
 								IgniteGigs - Book direct. Keep 92%. Own your reputation.
 							</p>
-							<p style="margin: 0; color: #9ca3af; font-size: 12px;">
+							<p style="margin: 0 0 8px; color: #9ca3af; font-size: 12px;">
 								&copy; ${new Date().getFullYear()} IgniteGigs. All rights reserved.
+							</p>
+							<p style="margin: 0; color: #9ca3af; font-size: 11px; line-height: 1.5;">
+								You can <a href="${PUBLIC_APP_URL}/dashboard/notifications" style="color: #FF6B35; text-decoration: underline;">manage your email preferences</a> or <a href="${PUBLIC_APP_URL}/dashboard/notifications" style="color: #FF6B35; text-decoration: underline;">unsubscribe</a> from this type of email.
 							</p>
 						</td>
 					</tr>
@@ -406,6 +412,285 @@ export async function sendNewMessageEmail(data: NewMessageData) {
 	return sendEmail({
 		to: data.recipientEmail,
 		subject: `New message from ${data.senderName}`,
+		html: emailWrapper(content)
+	});
+}
+
+
+// Review reminder notification (to client after booking is completed)
+interface ReviewReminderData {
+	to: string;
+	clientName: string;
+	performerName: string;
+	eventDate: string;
+	bookingId: string;
+}
+
+export async function sendReviewReminderEmail(data: ReviewReminderData) {
+	const content = `
+		<h1 style="margin: 0 0 24px; font-size: 24px; color: #1E1E2E;">How was your experience?</h1>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Hi ${data.clientName},
+		</p>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Your event with <strong>${data.performerName}</strong> on ${formatDate(data.eventDate)} has been completed! We'd love to hear how it went.
+		</p>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Your review helps other event organisers find great performers and helps ${data.performerName} build their reputation.
+		</p>
+		<div style="text-align: center;">
+			<a href="${PUBLIC_APP_URL}/dashboard/bookings/${data.bookingId}?review=true"
+			   style="display: inline-block; padding: 14px 32px; background-color: #FF6B35; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+				Leave a Review
+			</a>
+		</div>
+	`;
+	return sendEmail({
+		to: data.to,
+		subject: `How was ${data.performerName}? Leave a review`,
+		html: emailWrapper(content)
+	});
+}
+
+// PLI expiry warning notification (to performer)
+interface PLIExpiryData {
+	to: string;
+	performerName: string;
+	expiryDate: string;
+	daysUntilExpiry: number;
+}
+
+export async function sendPLIExpiryWarningEmail(data: PLIExpiryData) {
+	const urgencyColor = data.daysUntilExpiry <= 7 ? '#EF4444' : '#F59E0B';
+	const content = `
+		<h1 style="margin: 0 0 24px; font-size: 24px; color: #1E1E2E;">Insurance Expiry Reminder</h1>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Hi ${data.performerName},
+		</p>
+		<div style="background-color: ${data.daysUntilExpiry <= 7 ? '#FEF2F2' : '#FFFBEB'}; border-left: 4px solid ${urgencyColor}; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+			<p style="margin: 0; color: #1E1E2E; font-size: 16px; line-height: 1.6;">
+				Your Public Liability Insurance expires on <strong>${formatDate(data.expiryDate)}</strong>
+				${data.daysUntilExpiry <= 7 ? ' \u2014 that\'s less than a week away!' : ` \u2014 in ${data.daysUntilExpiry} days.`}
+			</p>
+		</div>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			${data.daysUntilExpiry <= 0 
+				? 'Your insurance has expired. Your profile is no longer visible to clients. Please update your insurance details to restore your visibility.'
+				: 'Once your insurance expires, your profile will no longer be visible to clients for booking. Please update your insurance details before the expiry date.'}
+		</p>
+		<div style="text-align: center;">
+			<a href="${PUBLIC_APP_URL}/dashboard/verification"
+			   style="display: inline-block; padding: 14px 32px; background-color: #FF6B35; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+				Update Insurance Details
+			</a>
+		</div>
+	`;
+	return sendEmail({
+		to: data.to,
+		subject: data.daysUntilExpiry <= 0 
+			? 'Your insurance has expired - action required'
+			: `Insurance expiry reminder - ${data.daysUntilExpiry} days remaining`,
+		html: emailWrapper(content)
+	});
+}
+
+// Blog comment notification (to blog post author)
+interface BlogCommentData {
+	to: string;
+	authorName: string;
+	commenterName: string;
+	postTitle: string;
+	commentPreview: string;
+	postSlug: string;
+}
+
+export async function sendBlogCommentEmail(data: BlogCommentData) {
+	const content = `
+		<h1 style="margin: 0 0 24px; font-size: 24px; color: #1E1E2E;">New Comment on Your Article</h1>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Hi ${data.authorName},
+		</p>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			<strong>${data.commenterName}</strong> commented on your article "<strong>${data.postTitle}</strong>":
+		</p>
+		<div style="background-color: #f9fafb; border-radius: 8px; padding: 24px; margin-bottom: 24px; border-left: 4px solid #FF6B35;">
+			<p style="margin: 0; color: #1E1E2E; font-size: 14px; line-height: 1.5;">"${data.commentPreview}"</p>
+		</div>
+		<div style="text-align: center;">
+			<a href="${PUBLIC_APP_URL}/blog/${data.postSlug}"
+			   style="display: inline-block; padding: 14px 32px; background-color: #FF6B35; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+				View Comment
+			</a>
+		</div>
+	`;
+	return sendEmail({
+		to: data.to,
+		subject: `${data.commenterName} commented on "${data.postTitle}"`,
+		html: emailWrapper(content)
+	});
+}
+
+// Contract ready notification (to client or performer)
+interface ContractReadyData {
+	to: string;
+	recipientName: string;
+	otherPartyName: string;
+	eventDate: string;
+	bookingId: string;
+}
+
+export async function sendContractReadyEmail(data: ContractReadyData) {
+	const content = `
+		<h1 style="margin: 0 0 24px; font-size: 24px; color: #1E1E2E;">Contract Ready for Signing</h1>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Hi ${data.recipientName},
+		</p>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			A booking agreement for your event on ${formatDate(data.eventDate)} with <strong>${data.otherPartyName}</strong> is ready for your review and signature.
+		</p>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Please review the terms carefully and sign the agreement to proceed with the booking.
+		</p>
+		<div style="text-align: center;">
+			<a href="${PUBLIC_APP_URL}/dashboard/bookings/${data.bookingId}"
+			   style="display: inline-block; padding: 14px 32px; background-color: #FF6B35; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+				Review & Sign Contract
+			</a>
+		</div>
+	`;
+	return sendEmail({
+		to: data.to,
+		subject: `Booking agreement ready for signing`,
+		html: emailWrapper(content)
+	});
+}
+
+// Welcome email (sent after signup)
+interface WelcomeEmailData {
+	to: string;
+	name: string;
+	isPerformer: boolean;
+}
+
+export async function sendWelcomeEmail(data: WelcomeEmailData) {
+	const content = `
+		<h1 style="margin: 0 0 24px; font-size: 24px; color: #1E1E2E;">Welcome to IgniteGigs!</h1>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Hi ${data.name},
+		</p>
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Thanks for joining IgniteGigs - the UK's platform for booking fire, LED, and circus performers directly.
+		</p>
+		${data.isPerformer ? `
+		<div style="background-color: #FFF0EB; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+			<h2 style="margin: 0 0 16px; font-size: 18px; color: #FF6B35;">Get Started as a Performer</h2>
+			<ol style="margin: 0; padding-left: 20px; color: #4b5563; font-size: 14px; line-height: 1.8;">
+				<li>Complete your profile with photos and videos</li>
+				<li>Upload your insurance details or Equity membership</li>
+				<li>Set your rates and availability</li>
+				<li>Start receiving booking requests!</li>
+			</ol>
+		</div>
+		<div style="text-align: center;">
+			<a href="${PUBLIC_APP_URL}/dashboard/profile"
+			   style="display: inline-block; padding: 14px 32px; background-color: #FF6B35; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+				Complete Your Profile
+			</a>
+		</div>
+		` : `
+		<div style="background-color: #FFF0EB; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+			<h2 style="margin: 0 0 16px; font-size: 18px; color: #FF6B35;">Find Amazing Performers</h2>
+			<p style="margin: 0; color: #4b5563; font-size: 14px; line-height: 1.6;">
+				Browse our curated selection of verified performers. Book directly and save up to 40% on agency fees.
+			</p>
+		</div>
+		<div style="text-align: center;">
+			<a href="${PUBLIC_APP_URL}/performers"
+			   style="display: inline-block; padding: 14px 32px; background-color: #FF6B35; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+				Browse Performers
+			</a>
+		</div>
+		`}
+	`;
+	return sendEmail({
+		to: data.to,
+		subject: 'Welcome to IgniteGigs!',
+		html: emailWrapper(content)
+	});
+}
+
+// Payment confirmation email (sent to client after successful payment)
+interface PaymentConfirmationData {
+	to: string;
+	clientName: string;
+	performerName: string;
+	eventDate: string;
+	amountPaid: number;
+	paymentType: 'deposit' | 'final';
+	bookingId: string;
+}
+
+export async function sendPaymentConfirmationEmail(data: PaymentConfirmationData) {
+	const isDeposit = data.paymentType === 'deposit';
+	const content = `
+		<h1 style="margin: 0 0 24px; font-size: 24px; color: #1E1E2E;">Payment Confirmed!</h1>
+
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Hi ${data.clientName},
+		</p>
+
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Your ${isDeposit ? 'deposit' : 'final payment'} for the booking with <strong>${data.performerName}</strong> has been successfully processed.
+		</p>
+
+		<div style="background-color: #D1FAE5; border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+			<div style="display: flex; align-items: center; margin-bottom: 16px;">
+				<span style="font-size: 24px; margin-right: 12px;">&#9989;</span>
+				<h2 style="margin: 0; font-size: 18px; color: #10B981;">Payment Details</h2>
+			</div>
+			<table style="width: 100%; border-collapse: collapse;">
+				<tr>
+					<td style="padding: 8px 0; color: #6b7280; font-size: 14px; width: 120px;">Amount Paid</td>
+					<td style="padding: 8px 0; color: #1E1E2E; font-size: 16px; font-weight: 600;">${formatPrice(data.amountPaid)}</td>
+				</tr>
+				<tr>
+					<td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Payment Type</td>
+					<td style="padding: 8px 0; color: #1E1E2E; font-size: 14px; font-weight: 500;">${isDeposit ? '50% Deposit' : 'Final Payment'}</td>
+				</tr>
+				<tr>
+					<td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Performer</td>
+					<td style="padding: 8px 0; color: #1E1E2E; font-size: 14px; font-weight: 500;">${data.performerName}</td>
+				</tr>
+				<tr>
+					<td style="padding: 8px 0; color: #6b7280; font-size: 14px;">Event Date</td>
+					<td style="padding: 8px 0; color: #1E1E2E; font-size: 14px; font-weight: 500;">${formatDate(data.eventDate)}</td>
+				</tr>
+			</table>
+		</div>
+
+		${isDeposit ? `
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Your booking is now confirmed! The remaining balance will be due after the event. You can message your performer through the booking page to discuss any details.
+		</p>
+		` : `
+		<p style="margin: 0 0 24px; color: #4b5563; font-size: 16px; line-height: 1.6;">
+			Your booking is now complete. Thank you for using IgniteGigs! We hope your event was amazing.
+		</p>
+		`}
+
+		<div style="text-align: center;">
+			<a href="${PUBLIC_APP_URL}/dashboard/bookings/${data.bookingId}"
+			   style="display: inline-block; padding: 14px 32px; background-color: #FF6B35; color: white; text-decoration: none; border-radius: 8px; font-weight: 600; font-size: 16px;">
+				View Booking
+			</a>
+		</div>
+	`;
+
+	return sendEmail({
+		to: data.to,
+		subject: isDeposit
+			? `Deposit confirmed for your booking with ${data.performerName}`
+			: `Payment confirmed - booking with ${data.performerName} complete`,
 		html: emailWrapper(content)
 	});
 }

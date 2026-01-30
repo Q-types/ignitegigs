@@ -46,7 +46,8 @@ export const load: PageServerLoad = async ({ url, parent, locals: { supabase } }
 		month,
 		availability: availability ?? [],
 		bookings: bookings ?? [],
-		performerId: performerProfile.id
+		performerId: performerProfile.id,
+		performerProfile
 	};
 };
 
@@ -150,5 +151,34 @@ export const actions: Actions = {
 		}
 
 		return { success: true, message: `Updated ${dates.length} dates` };
+	},
+
+	updateCancellationPolicy: async ({ request, locals: { supabase, session }, parent }) => {
+		if (!session) {
+			throw redirect(303, '/auth/login');
+		}
+
+		const { performerProfile } = await parent();
+		if (!performerProfile) {
+			return fail(400, { error: 'No performer profile found' });
+		}
+
+		const formData = await request.formData();
+		const cancellationPolicy = formData.get('cancellationPolicy') as string;
+
+		if (!['flexible', 'standard', 'strict'].includes(cancellationPolicy)) {
+			return fail(400, { error: 'Invalid cancellation policy' });
+		}
+
+		const { error } = await supabase
+			.from('performer_profiles')
+			.update({ cancellation_policy: cancellationPolicy })
+			.eq('id', performerProfile.id);
+
+		if (error) {
+			return fail(500, { error: 'Failed to update cancellation policy' });
+		}
+
+		return { success: true, message: 'Cancellation policy updated!' };
 	}
 };

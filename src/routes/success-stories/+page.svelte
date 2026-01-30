@@ -196,7 +196,7 @@
 									</p>
 									<div class="flex items-center gap-2 mt-1">
 										{#if story.stats.rating}
-											<Rating value={story.stats.rating} size="sm" halfStars />
+											<Rating value={story.stats.rating} size="sm" />
 											<span class="text-sm text-gray-500">{story.stats.rating}</span>
 										{/if}
 									</div>

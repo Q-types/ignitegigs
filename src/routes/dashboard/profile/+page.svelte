@@ -16,6 +16,7 @@
 	let hourlyRate = $state(profile?.hourly_rate_pence ? (profile.hourly_rate_pence / 100).toString() : '');
 	let eventRate = $state(profile?.event_rate_pence ? (profile.event_rate_pence / 100).toString() : '');
 	let minRate = $state(profile?.min_rate_pence ? (profile.min_rate_pence / 100).toString() : '');
+	let showRate = $state(profile?.show_rate_pence ? (profile.show_rate_pence / 100).toString() : '');
 	let isLoading = $state(false);
 
 	const categories = [
@@ -24,25 +25,128 @@
 		{ value: 'circus', label: 'Circus Arts' },
 		{ value: 'dance', label: 'Dance' },
 		{ value: 'aerial', label: 'Aerial' },
-		{ value: 'stilt', label: 'Stilt Walking' }
-	];
-
-	const actTypes = [
-		{ value: 'poi', label: 'Poi' },
-		{ value: 'staff', label: 'Staff' },
-		{ value: 'hoop', label: 'Hoop' },
-		{ value: 'fans', label: 'Fans' },
-		{ value: 'fire_breathing', label: 'Fire Breathing' },
-		{ value: 'fire_eating', label: 'Fire Eating' },
+		{ value: 'stilt', label: 'Stilt Walking' },
 		{ value: 'juggling', label: 'Juggling' },
 		{ value: 'acrobatics', label: 'Acrobatics' },
-		{ value: 'contortion', label: 'Contortion' },
-		{ value: 'silk', label: 'Aerial Silk' },
-		{ value: 'trapeze', label: 'Trapeze' },
-		{ value: 'lyra', label: 'Lyra/Hoop' },
-		{ value: 'contemporary', label: 'Contemporary Dance' },
-		{ value: 'bellydance', label: 'Bellydance' },
-		{ value: 'other', label: 'Other' }
+		{ value: 'caricature', label: 'Caricature' },
+		{ value: 'comedy', label: 'Comedy' },
+		{ value: 'walkabout', label: 'Walkabout' },
+		{ value: 'magic', label: 'Magic' }
+	];
+
+	const actTypeGroups = [
+		{
+			label: 'Fire Props',
+			types: [
+				{ value: 'poi', label: 'Poi' },
+				{ value: 'staff', label: 'Staff' },
+				{ value: 'contact_staff', label: 'Contact Staff' },
+				{ value: 'rope_dart', label: 'Rope Dart' },
+				{ value: 'meteor_hammer', label: 'Meteor Hammer' },
+				{ value: 'sword', label: 'Sword' },
+				{ value: 'contact_sword', label: 'Contact Sword' },
+				{ value: 'hoop', label: 'Hoop' },
+				{ value: 'fans', label: 'Fans' },
+				{ value: 'palm_candles', label: 'Palm Candles' },
+				{ value: 'fire_breathing', label: 'Fire Breathing' },
+				{ value: 'fire_eating', label: 'Fire Eating' },
+				{ value: 'fire_whip', label: 'Fire Whip' },
+				{ value: 'fire_fingers', label: 'Fire Fingers' },
+				{ value: 'dragon_staff', label: 'Dragon Staff' },
+				{ value: 'fire_leviwand', label: 'Fire Leviwand' }
+			]
+		},
+		{
+			label: 'LED Props',
+			types: [
+				{ value: 'led_poi', label: 'LED Poi' },
+				{ value: 'led_staff', label: 'LED Staff' },
+				{ value: 'led_hoop', label: 'LED Hoop' },
+				{ value: 'led_fans', label: 'LED Fans' },
+				{ value: 'pixel_poi', label: 'Pixel Poi' },
+				{ value: 'led_leviwand', label: 'LED Leviwand' }
+			]
+		},
+		{
+			label: 'Juggling',
+			types: [
+				{ value: 'balls', label: 'Balls' },
+				{ value: 'clubs', label: 'Clubs' },
+				{ value: 'rings', label: 'Rings' },
+				{ value: 'diabolo', label: 'Diabolo' },
+				{ value: 'devil_sticks', label: 'Devil Sticks' },
+				{ value: 'cigar_boxes', label: 'Cigar Boxes' }
+			]
+		},
+		{
+			label: 'Aerial',
+			types: [
+				{ value: 'silk', label: 'Aerial Silk' },
+				{ value: 'trapeze', label: 'Trapeze' },
+				{ value: 'lyra', label: 'Lyra/Hoop' },
+				{ value: 'corde_lisse', label: 'Rope' },
+				{ value: 'aerial_net', label: 'Aerial Net' }
+			]
+		},
+		{
+			label: 'Acrobatics',
+			types: [
+				{ value: 'tumbling', label: 'Tumbling' },
+				{ value: 'hand_balancing', label: 'Hand Balancing' },
+				{ value: 'partner_acrobatics', label: 'Partner Acrobatics' },
+				{ value: 'contortion', label: 'Contortion' }
+			]
+		},
+		{
+			label: 'Dance',
+			types: [
+				{ value: 'contemporary', label: 'Contemporary Dance' },
+				{ value: 'bellydance', label: 'Bellydance' },
+				{ value: 'breakdancing', label: 'Breakdancing' },
+				{ value: 'ballet', label: 'Ballet' },
+				{ value: 'latin', label: 'Latin' }
+			]
+		},
+		{
+			label: 'Magic',
+			types: [
+				{ value: 'close_up_magic', label: 'Close-Up Magic' },
+				{ value: 'stage_magic', label: 'Stage Magic' },
+				{ value: 'mentalism', label: 'Mentalism' },
+				{ value: 'card_magic', label: 'Card Magic' },
+				{ value: 'illusions', label: 'Illusions' }
+			]
+		},
+		{
+			label: 'Comedy',
+			types: [
+				{ value: 'physical_comedy', label: 'Physical Comedy' },
+				{ value: 'stand_up', label: 'Stand Up' },
+				{ value: 'improvisation', label: 'Improvisation' },
+				{ value: 'clowning', label: 'Clowning' }
+			]
+		},
+		{
+			label: 'Walkabout',
+			types: [
+				{ value: 'character_walkabout', label: 'Character Walkabout' },
+				{ value: 'living_statue', label: 'Living Statue' },
+				{ value: 'stilt_character', label: 'Stilt Character' }
+			]
+		},
+		{
+			label: 'Caricature',
+			types: [
+				{ value: 'live_caricature', label: 'Live Caricature' },
+				{ value: 'digital_caricature', label: 'Digital Caricature' }
+			]
+		},
+		{
+			label: 'Other',
+			types: [
+				{ value: 'other', label: 'Other' }
+			]
+		}
 	];
 
 	function toggleCategory(value: string) {
@@ -218,24 +322,31 @@
 			<h2 class="font-display text-lg font-semibold text-secondary mb-4">Act Types</h2>
 			<p class="text-sm text-gray-500 mb-4">What props/styles do you perform?</p>
 
-			<div class="flex flex-wrap gap-2">
-				{#each actTypes as act}
-					<button
-						type="button"
-						class="px-4 py-2 rounded-full text-sm font-medium transition-all {selectedActTypes.includes(act.value)
-							? 'bg-primary text-white'
-							: 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
-						onclick={() => toggleActType(act.value)}
-					>
-						<input
-							type="checkbox"
-							name="actTypes"
-							value={act.value}
-							checked={selectedActTypes.includes(act.value)}
-							class="sr-only"
-						/>
-						{act.label}
-					</button>
+			<div class="space-y-6">
+				{#each actTypeGroups as group}
+					<div>
+						<h3 class="text-sm font-semibold text-gray-700 mb-2">{group.label}</h3>
+						<div class="flex flex-wrap gap-2">
+							{#each group.types as act}
+								<button
+									type="button"
+									class="px-4 py-2 rounded-full text-sm font-medium transition-all {selectedActTypes.includes(act.value)
+										? 'bg-primary text-white'
+										: 'bg-gray-100 text-gray-700 hover:bg-gray-200'}"
+									onclick={() => toggleActType(act.value)}
+								>
+									<input
+										type="checkbox"
+										name="actTypes"
+										value={act.value}
+										checked={selectedActTypes.includes(act.value)}
+										class="sr-only"
+									/>
+									{act.label}
+								</button>
+							{/each}
+						</div>
+					</div>
 				{/each}
 			</div>
 		</div>
@@ -247,7 +358,7 @@
 				Set your rates. You can always provide custom quotes for specific events.
 			</p>
 
-			<div class="grid sm:grid-cols-3 gap-4">
+			<div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
 				<div>
 					<label for="hourlyRate" class="label">Hourly Rate (£)</label>
 					<div class="relative">
@@ -261,6 +372,23 @@
 							bind:value={hourlyRate}
 							class="input pl-8"
 							placeholder="150"
+						/>
+					</div>
+				</div>
+
+				<div>
+					<label for="showRate" class="label">Per Show Rate (£)</label>
+					<div class="relative">
+						<span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">£</span>
+						<input
+							id="showRate"
+							name="showRate"
+							type="number"
+							min="0"
+							step="25"
+							bind:value={showRate}
+							class="input pl-8"
+							placeholder="350"
 						/>
 					</div>
 				</div>

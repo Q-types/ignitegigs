@@ -2,6 +2,8 @@ import { fail, redirect } from '@sveltejs/kit';
 import { dev } from '$app/environment';
 import type { Actions, PageServerLoad } from './$types';
 import { getSafeRedirectUrl } from '$lib/server/security';
+import { checkFormRateLimit } from '$lib/server/rateLimit';
+import { sendWelcomeEmail } from '$lib/server/email';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const accountType = url.searchParams.get('type') as 'performer' | 'client' | null;
@@ -16,6 +18,10 @@ export const load: PageServerLoad = async ({ url }) => {
 export const actions: Actions = {
 	// Email/password signup
 	signup: async ({ request, locals: { supabase }, url }) => {
+		// Rate limit: 3 signup attempts per 5 minutes per IP
+		const blocked = checkFormRateLimit(request, 'signup');
+		if (blocked) return blocked;
+
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
@@ -174,6 +180,17 @@ export const actions: Actions = {
 			} catch (profileCreationError) {
 				// Log but don't block signup for profile creation errors
 				console.error('Unexpected error creating user profile:', profileCreationError);
+			}
+
+			// Send welcome email
+			try {
+				await sendWelcomeEmail({
+					to: email,
+					name: fullName,
+					isPerformer: accountType === 'performer' || !accountType
+				});
+			} catch (welcomeEmailError) {
+				console.error('Failed to send welcome email:', welcomeEmailError);
 			}
 		}
 

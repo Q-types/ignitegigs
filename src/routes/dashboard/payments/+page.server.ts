@@ -66,6 +66,10 @@ export const load: PageServerLoad = async ({ url, parent, locals: { supabase } }
 		.filter((b) => new Date(b.completed_at!) >= thisMonthStart)
 		.reduce((sum, b) => sum + (b.performer_payout_pence || 0), 0);
 
+	// Check for setup status from Stripe Connect callback
+	const setupStatus = url.searchParams.get('setup'); // 'complete' | 'pending' | null
+	const setupError = url.searchParams.get('error') === 'true';
+
 	return {
 		stripeStatus,
 		balance,
@@ -73,7 +77,9 @@ export const load: PageServerLoad = async ({ url, parent, locals: { supabase } }
 		totalEarnings,
 		thisMonthEarnings,
 		hasStripeAccount: !!performerProfile.stripe_account_id,
-		isOnboarded: performerProfile.stripe_onboarding_complete
+		isOnboarded: performerProfile.stripe_onboarding_complete,
+		setupStatus,
+		setupError
 	};
 };
 

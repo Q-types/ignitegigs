@@ -1,28 +1,25 @@
 <script lang="ts">
-	let name = $state('');
-	let email = $state('');
-	let subject = $state('General');
-	let message = $state('');
+	import { enhance } from '$app/forms';
+	import type { ActionData } from './$types';
+
+	let { form }: { form: ActionData } = $props();
+
 	let isSubmitting = $state(false);
 	let isSubmitted = $state(false);
 
+	// Drive success state from form response
+	$effect(() => {
+		if (form?.success) {
+			isSubmitted = true;
+		}
+	});
+
 	const subjects = ['General', 'Support', 'Partnerships', 'Feedback'];
 
-	function handleSubmit(event: Event) {
-		event.preventDefault();
-		isSubmitting = true;
-
-		// Simulate form submission delay
-		setTimeout(() => {
-			isSubmitting = false;
-			isSubmitted = true;
-			// Reset form
-			name = '';
-			email = '';
-			subject = 'General';
-			message = '';
-		}, 1000);
-	}
+	let name = $state(form?.name ?? '');
+	let email = $state(form?.email ?? '');
+	let subject = $state(form?.subject ?? 'General');
+	let message = $state(form?.message ?? '');
 
 	let isFormValid = $derived(
 		name.trim().length >= 2 &&
@@ -133,12 +130,28 @@
 						</button>
 					</div>
 				{:else}
-					<form onsubmit={handleSubmit} class="space-y-6">
+					{#if form?.error}
+						<div class="mb-6 p-4 bg-error-light text-error rounded-lg flex items-start gap-3">
+							<svg class="w-5 h-5 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+							</svg>
+							<span>{form.error}</span>
+						</div>
+					{/if}
+
+					<form method="POST" use:enhance={() => {
+						isSubmitting = true;
+						return async ({ update }) => {
+							isSubmitting = false;
+							await update();
+						};
+					}} class="space-y-6">
 						<!-- Name -->
 						<div>
 							<label for="name" class="label">Name <span class="text-error">*</span></label>
 							<input
 								id="name"
+								name="name"
 								type="text"
 								required
 								bind:value={name}
@@ -152,6 +165,7 @@
 							<label for="email" class="label">Email <span class="text-error">*</span></label>
 							<input
 								id="email"
+								name="email"
 								type="email"
 								required
 								bind:value={email}
@@ -165,6 +179,7 @@
 							<label for="subject" class="label">Subject</label>
 							<select
 								id="subject"
+								name="subject"
 								bind:value={subject}
 								class="input"
 							>
@@ -179,6 +194,7 @@
 							<label for="message" class="label">Message <span class="text-error">*</span></label>
 							<textarea
 								id="message"
+								name="message"
 								required
 								bind:value={message}
 								rows="5"

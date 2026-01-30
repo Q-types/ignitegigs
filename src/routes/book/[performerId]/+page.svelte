@@ -13,8 +13,11 @@
 	let eventDetails = $state(form?.eventDetails ?? '');
 	let guestCount = $state('');
 	let isLoading = $state(false);
+	let dateCheckLoading = $state(false);
+	let dateConflict = $state(false);
 
 	const performer = data.performer;
+	const bookedDates: string[] = data.bookedDates ?? [];
 
 	// Get minimum date (tomorrow)
 	const tomorrow = new Date();
@@ -34,12 +37,49 @@
 		return `£${(pence / 100).toLocaleString()}`;
 	}
 
-	// Check if selected date is available
+	// Check if selected date is available from the availability table
 	function isDateAvailable(date: string): boolean {
 		const avail = data.availability.find((a) => a.date === date);
 		if (!avail) return true; // Unknown = potentially available
 		return avail.is_available && !avail.is_booked;
 	}
+
+	// Check if performer already has an active booking on this date
+	function isDateBooked(date: string): boolean {
+		return bookedDates.includes(date);
+	}
+
+	// Client-side availability check when date changes
+	async function checkDateAvailability() {
+		if (!eventDate) {
+			dateConflict = false;
+			return;
+		}
+
+		// Fast check: use pre-loaded booked dates
+		if (isDateBooked(eventDate)) {
+			dateConflict = true;
+			return;
+		}
+
+		// Live check: query the database for the latest booking status
+		dateCheckLoading = true;
+		dateConflict = false;
+		try {
+			const res = await fetch(`/api/calendar/${performer.id}?date=${eventDate}`);
+			if (res.ok) {
+				const result = await res.json();
+				dateConflict = result.isBooked === true;
+			}
+		} catch {
+			// If the check fails, allow submission and let the server validate
+		} finally {
+			dateCheckLoading = false;
+		}
+	}
+
+	// Derived: true if the selected date has any kind of conflict
+	let hasDateConflict = $derived(dateConflict || (eventDate ? isDateBooked(eventDate) : false));
 
 	const eventTypes = [
 		'Wedding',
@@ -108,9 +148,26 @@
 										required
 										min={minDate}
 										bind:value={eventDate}
+										onchange={checkDateAvailability}
 										class="input"
+										class:border-error={hasDateConflict}
 									/>
-									{#if eventDate && !isDateAvailable(eventDate)}
+									{#if dateCheckLoading}
+										<p class="text-sm text-gray-400 mt-1 flex items-center gap-1">
+											<svg class="animate-spin h-3 w-3" fill="none" viewBox="0 0 24 24">
+												<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+												<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+											</svg>
+											Checking availability...
+										</p>
+									{:else if hasDateConflict}
+										<p class="text-sm text-error mt-1 flex items-center gap-1">
+											<svg class="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636" />
+											</svg>
+											This performer is already booked on this date. Please choose another date.
+										</p>
+									{:else if eventDate && !isDateAvailable(eventDate)}
 										<p class="text-sm text-warning mt-1">This date may not be available. The performer will confirm.</p>
 									{/if}
 								</div>
@@ -200,7 +257,7 @@
 							<!-- Submit -->
 							<button
 								type="submit"
-								disabled={isLoading || !eventDate || !eventLocation}
+								disabled={isLoading || !eventDate || !eventLocation || hasDateConflict || dateCheckLoading}
 								class="btn-primary btn-lg w-full"
 							>
 								{#if isLoading}

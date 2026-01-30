@@ -2,6 +2,12 @@ import { fail, redirect } from '@sveltejs/kit';
 import { dev } from '$app/environment';
 import type { Actions, PageServerLoad } from './$types';
 import { getSafeRedirectUrl } from '$lib/server/security';
+import {
+	checkFormRateLimit,
+	getRateLimitKey,
+	recordFailedAttempt,
+	clearFailedAttempts
+} from '$lib/server/rateLimit';
 
 export const load: PageServerLoad = async ({ url }) => {
 	const redirectTo = getSafeRedirectUrl(url.searchParams.get('redirectTo'));
@@ -18,6 +24,10 @@ export const load: PageServerLoad = async ({ url }) => {
 export const actions: Actions = {
 	// Magic link login
 	magicLink: async ({ request, locals: { supabase }, url }) => {
+		// Rate limit: 5 magic link requests per minute per IP
+		const blocked = checkFormRateLimit(request, 'login');
+		if (blocked) return blocked;
+
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 		const redirectTo = formData.get('redirectTo') as string;
@@ -72,6 +82,10 @@ export const actions: Actions = {
 
 	// Password login
 	password: async ({ request, locals: { supabase } }) => {
+		// Rate limit: 5 password attempts per minute per IP
+		const blocked = checkFormRateLimit(request, 'login');
+		if (blocked) return blocked;
+
 		const formData = await request.formData();
 		const email = formData.get('email') as string;
 		const password = formData.get('password') as string;
@@ -84,12 +98,17 @@ export const actions: Actions = {
 			});
 		}
 
+		const rateLimitKey = getRateLimitKey(request, 'login');
+
 		const { error } = await supabase.auth.signInWithPassword({
 			email,
 			password
 		});
 
 		if (error) {
+			// Track failed attempt for brute-force lockout
+			recordFailedAttempt(rateLimitKey);
+
 			console.error('Password login error:', error.message, error.status, error);
 
 			if (error.message.includes('Email not confirmed')) {
@@ -116,6 +135,9 @@ export const actions: Actions = {
 				email
 			});
 		}
+
+		// Successful login — clear any brute-force tracking
+		clearFailedAttempts(rateLimitKey);
 
 		throw redirect(303, redirectTo || '/dashboard');
 	},

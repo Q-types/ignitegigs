@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { User } from '@supabase/supabase-js';
+	import NotificationBell from './NotificationBell.svelte';
 
 	let { user }: { user: User | null } = $props();
 
@@ -27,17 +28,24 @@
 
 			<!-- Desktop Navigation -->
 			<div class="hidden md:flex items-center gap-6">
+				<a href="/discover" class="text-primary font-medium hover:text-primary/80 transition-colors">
+					Find Your Vibe
+				</a>
 				<a href="/performers" class="text-gray-600 hover:text-secondary transition-colors">
 					Find Performers
 				</a>
 				<a href="/how-it-works" class="text-gray-600 hover:text-secondary transition-colors">
 					How It Works
 				</a>
+				<a href="/blog" class="text-gray-600 hover:text-secondary transition-colors">
+					Blog
+				</a>
 
 				{#if user}
 					<a href="/dashboard" class="text-gray-600 hover:text-secondary transition-colors">
 						Dashboard
 					</a>
+					<NotificationBell userId={user.id} />
 					<form method="POST" action="/auth/logout">
 						<button type="submit" class="btn-ghost btn-md">
 							Log Out
@@ -76,17 +84,26 @@
 		{#if mobileMenuOpen}
 			<div class="md:hidden border-t border-gray-100 py-4 animate-fade-in">
 				<div class="flex flex-col gap-2">
+					<a href="/discover" class="px-4 py-2 text-primary font-medium hover:bg-primary/5 rounded-lg">
+						Find Your Vibe
+					</a>
 					<a href="/performers" class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
 						Find Performers
 					</a>
 					<a href="/how-it-works" class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
 						How It Works
 					</a>
+					<a href="/blog" class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
+						Blog
+					</a>
 
 					{#if user}
 						<a href="/dashboard" class="px-4 py-2 text-gray-600 hover:bg-gray-50 rounded-lg">
 							Dashboard
 						</a>
+						<div class="px-4 py-2">
+							<NotificationBell userId={user.id} />
+						</div>
 						<form method="POST" action="/auth/logout" class="px-4">
 							<button type="submit" class="w-full btn-ghost btn-md justify-start">
 								Log Out

@@ -1,6 +1,7 @@
 import { redirect } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
 import { getSafeRedirectUrl, sanitizeForLog } from '$lib/server/security';
+import { sendWelcomeEmail } from '$lib/server/email';
 
 export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 	const code = url.searchParams.get('code');
@@ -53,6 +54,17 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 					if (profileError) {
 						console.error('Error creating performer profile:', sanitizeForLog(profileError));
 					}
+				}
+
+				// Send welcome email to new user
+				try {
+					await sendWelcomeEmail({
+						to: data.user.email!,
+						name: data.user.user_metadata?.full_name || data.user.user_metadata?.name || data.user.email?.split('@')[0] || 'User',
+						isPerformer: accountType === 'performer' || !accountType
+					});
+				} catch (welcomeEmailError) {
+					console.error('Failed to send welcome email:', welcomeEmailError);
 				}
 			}
 
